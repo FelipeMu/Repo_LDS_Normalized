@@ -1373,16 +1373,10 @@ struct_step_tecs_norm(num_people) = struct('nombre', '','coefs_step', [], 'scals
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%% LECTURA DE ARCHIVO - ESCALON INVERSO UNITARIO %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Se establece el directorio en donde se encuentra el archivo Esc_neg.txt
-direct_escalon_inverso_norm = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/Escalon_Inverso_Norm';
-% Se define el directorio y se busca el archivo a utilizar
-file_path_escalon_inverso_norm = fullfile(direct_escalon_inverso_norm, 'Esc_neg.txt');
-% Se procede a cargar el archivo .txt asociado al escalon inverso unitario
-data = load(file_path_escalon_inverso_norm);
-% Se lee cada columna del archivo
-column1 = data(:, 1);
-column2 = data(:, 2);
-column3 = data(:, 3);
+% Llamada a funcion que crea el escalon y lo nomraliza con min-max:
+step_norm = get_step_normalized(Ts, butterworth_order, cut_freq);
+
+
 
 
 
@@ -1395,7 +1389,7 @@ for i = 1:num_people
     fprintf('(%i) Creando coeficientes de escalon inverso para sano: %s\n', i, persona_sana.name_file);
     pam_persona_sana = persona_sana.signal_pam_norm; %se selecciona la senal PAM de la persona i
     %CALCULO Y OBTENCION DE LA SENAL DEL ESCALON INVERSO
-    escalon_inverso_unitario_persona_sana = get_step_no_normalized_testing(Ts, butterworth_order, cut_freq, pam_persona_sana);
+    escalon_inverso_unitario_persona_sana = get_step_normalized(Ts, butterworth_order, cut_freq);
     %CALCULO DE LA CWT() PARA OBTENER LOS COEFICIENTES (INPUT DE LA RED)
     [coefs_step, freqs_step, scalscfs_step, psif_step] = cwt(escalon_inverso_unitario_persona_sana);
     %ASIGNAR INFORMACION DE LA PERSONA SANA A SU RESPECTIVA ESTRUCTURA
@@ -1422,7 +1416,7 @@ for i = 1:num_people
     pam_persona_tec = persona_tec.signal_pam_norm; %se selecciona la senal PAM de la persona i
     fprintf('(%i) Creando coeficientes de escalon inverso para tec: %s\n', i, persona_tec.name_file);
     %CALCULO Y OBTENCION DE LA SENAL DEL ESCALON INVERSO
-    escalon_inverso_unitario_persona_tec = get_step_no_normalized_testing(Ts, butterworth_order, cut_freq, pam_persona_tec);
+    escalon_inverso_unitario_persona_tec = get_step_normalized(Ts, butterworth_order, cut_freq);
     %CALCULO DE LA CWT() PARA OBTENER LOS COEFICIENTES (INPUT DE LA RED)
     [coefs_step, freqs_step, scalscfs_step, psif_step] = cwt(escalon_inverso_unitario_persona_tec);
     %ASIGNAR INFORMACION DE LA PERSONA TEC A SU RESPECTIVA ESTRUCTURA
@@ -1484,12 +1478,12 @@ xticks(0:5:max(t));
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % SE GUARDA ESTRUCTURA ASOCIADA A LOS SANOS EN FORMATO .mat
-dir_structs_sano = strcat('D:/TT/Memoria/MemoriaCodigoFuentev3/codigo_matlab/codigo_fuente/Estructuras_SANOS_TEC/');
+dir_structs_sano = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/Estructuras_SANOS_TEC/');
 % Guardar la una estructuras generales del escalon inverso unitario de cada sujeto SANO en un archivo .mat
-save(fullfile(dir_structs_sano, 'struct_step_sanos.mat'), 'struct_step_sanos_norm');
+save(fullfile(dir_structs_sano, 'struct_step_sanos_norm.mat'), 'struct_step_sanos_norm');
 
 % SE GUARDA ESTRUCTURA ASOCIADA A LOS TECs EN FORMATO .mat
-dir_structs_tec = strcat('D:/TT/Memoria/MemoriaCodigoFuentev3/codigo_matlab/codigo_fuente/Estructuras_SANOS_TEC/');
+dir_structs_tec = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/Estructuras_SANOS_TEC/');
 % Guardar la una estructuras generales del escalon inverso unitario de cada paciente TEC en un archivo .mat
-save(fullfile(dir_structs_tec, 'struct_step_tecs.mat'), 'struct_step_tecs_norm');
+save(fullfile(dir_structs_tec, 'struct_step_tecs_norm.mat'), 'struct_step_tecs_norm');
 

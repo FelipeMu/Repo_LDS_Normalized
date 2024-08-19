@@ -1,5 +1,4 @@
 function [en] = get_step_normalized(Ts, order, cut_freq)
-  
     escalonInverso=ones(150/Ts,1);
     escalonInverso(1:length(escalonInverso)/2)=escalonInverso(1:length(escalonInverso)/2);%*max(PAM);
     escalonInverso(1+length(escalonInverso)/2:length(escalonInverso))=escalonInverso(1+length(escalonInverso)/2:length(escalonInverso))*0;%*min(PAM);
@@ -13,9 +12,8 @@ function [en] = get_step_normalized(Ts, order, cut_freq)
     disp('largoo:');
     disp(length(escalonInversoFinal));
     
+    % Obtencion de escalon normalizado: 
     mins = min(escalonInversoFinal);
     maxs = max(escalonInversoFinal);
     en = (escalonInversoFinal - mins)/(maxs - mins); 
-
-
 end
