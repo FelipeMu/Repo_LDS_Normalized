@@ -920,282 +920,6 @@ for i = 1:num_people
 end
 %}
 
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%% COPIADO DE CARPETAS A NUEVOS DIRECTORIOS DESDE DIRECOTRIO BASE A DIRECTORIO CON LOS INPUTS PARA LA RED PARA %%%%% 
-%%%%%%%%%%%%%% PREDECIR LA SEÑAL VSC                                                                                         %%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
-direct_sanos_to_copy = 'D:/TT/Memoria/MemoriaCodigoFuentev3/codigo_matlab/codigo_fuente/signals_LDS_training/SANOS';
-direct_tecs_to_copy = 'D:/TT/Memoria/MemoriaCodigoFuentev3/codigo_matlab/codigo_fuente/signals_LDS_training/TEC';
-
-direct_sanos = 'D:/TT/Memoria/MemoriaCodigoFuentev3/codigo_matlab/codigo_fuente/signals_LDS_IOpredictions/SANOS';
-direct_tecs = 'D:/TT/Memoria/MemoriaCodigoFuentev3/codigo_matlab/codigo_fuente/signals_LDS_IOpredictions/TEC';
-
-% Obtener los nombres de las carpetas dentro del directorio de SANOS
-folders_sanos = dir(direct_sanos_to_copy);
-foldernames_sanos = {folders_sanos([folders_sanos.isdir]).name}; % se obtiene los nombres de las carpetas
-% Eliminar los nombres '.' y '..' que representan el directorio actual y el directorio padre
-foldernames_sanos = setdiff(foldernames_sanos, {'.', '..'}); % vector fila que almacena los nombres de todas las carpetas de sujetos sanos
-
-% Obtener los nombres de las carpetas dentro del directorio de TEC
-folders_tecs = dir(direct_tecs_to_copy);
-foldernames_tecs = {folders_tecs([folders_tecs.isdir]).name}; % se obtiene los nombres de las carpetas
-% Eliminar los nombres '.' y '..' que representan el directorio actual y el directorio padre
-foldernames_tecs = setdiff(foldernames_tecs, {'.', '..'}); % vector fila que almacena los nombres de todas las carpetas de pacientes TEC
-
-
-% Copiar las carpetas asociadas a los inputs y outputs para el
-% el entrenamiento de la red (carpetas tensores 3d)
-for i = 1:num_people
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %PAM
-    % Directorios de origen
-    %source_folder_sano_pam_tensor3d = fullfile(direct_sanos_to_copy, foldernames_sanos{i}, 'PAMnoises_matrixcomplex_npy_tensor3d');
-    %source_folder_tec_pam_tensor3d = fullfile(direct_tecs_to_copy, foldernames_tecs{i}, 'PAMnoises_matrixcomplex_npy_tensor3d');
-    %dest_folder_sano_pam_tensor3d = fullfile(direct_sanos, foldernames_sanos{i}, 'PAMnoises_matrixcomplex_npy_tensor3d');
-    %dest_folder_tec_pam_tensor3d = fullfile(direct_tecs, foldernames_tecs{i}, 'PAMnoises_matrixcomplex_npy_tensor3d');
-
-
-    %DIRECTORIOS ORIGEN
-    % OBTENCION DE LAS CARPETAS SOLICITADAS DE LOS SUJETOS SANOS
-    source_folder_sano_CoefsPredVSCd = fullfile(direct_sanos_to_copy, foldernames_sanos{i}, 'CoefficientsPredicted_VSCd');
-    source_folder_sano_CoefsPredVSCi = fullfile(direct_sanos_to_copy, foldernames_sanos{i}, 'CoefficientsPredicted_VSCi');
-    source_folder_sano_PAMoriginal = fullfile(direct_sanos_to_copy, foldernames_sanos{i}, 'PAMoriginal_matrixcomplex');
-    source_folder_sano_Step = fullfile(direct_sanos_to_copy, foldernames_sanos{i}, 'step');
-    % OBTENCION DE LAS CARPETAS SOLICITADAS DE LOS PACIENTES TEC
-    source_folder_tec_CoefsPredVSCd = fullfile(direct_tecs_to_copy, foldernames_tecs{i}, 'CoefficientsPredicted_VSCd');
-    source_folder_tec_CoefsPredVSCi = fullfile(direct_tecs_to_copy, foldernames_tecs{i}, 'CoefficientsPredicted_VSCi');
-    source_folder_tec_PAMoriginal = fullfile(direct_tecs_to_copy, foldernames_tecs{i}, 'PAMoriginal_matrixcomplex');
-    source_folder_tec_Step = fullfile(direct_tecs_to_copy, foldernames_tecs{i}, 'step');
-
-
-    % DIRECTORIOS DESTINO
-    % OBTENCION DE LAS CARPETAS SOLICITADAS DE LOS SUJETOS SANOS
-    dest_folder_sano_CoefsPredVSCd = fullfile(direct_sanos, foldernames_sanos{i}, 'CoefficientsPredicted_VSCd');
-    dest_folder_sano_CoefsPredVSCi = fullfile(direct_sanos, foldernames_sanos{i}, 'CoefficientsPredicted_VSCi');
-    dest_folder_sano_PAMoriginal = fullfile(direct_sanos, foldernames_sanos{i}, 'PAMoriginal_matrixcomplex');
-    dest_folder_sano_Step = fullfile(direct_sanos, foldernames_sanos{i}, 'step');
-    % OBTENCION DE LAS CARPETAS SOLICITADAS DE LOS PACIENTES TEC
-    dest_folder_tec_CoefsPredVSCd = fullfile(direct_tecs, foldernames_tecs{i}, 'CoefficientsPredicted_VSCd');
-    dest_folder_tec_CoefsPredVSCi = fullfile(direct_tecs, foldernames_tecs{i}, 'CoefficientsPredicted_VSCi');
-    dest_folder_tec_PAMoriginal = fullfile(direct_tecs, foldernames_tecs{i}, 'PAMoriginal_matrixcomplex');
-    dest_folder_tec_Step = fullfile(direct_tecs, foldernames_tecs{i}, 'step');
-    
-   
-    
-    % CREACION DE CARPETAS DESTINO SI NO EXISTEN:
-    % PARA SANOS:
-    if ~exist(dest_folder_sano_CoefsPredVSCd, 'dir')
-        mkdir(dest_folder_sano_CoefsPredVSCd);
-    end
-    if ~exist(dest_folder_sano_CoefsPredVSCi, 'dir')
-        mkdir(dest_folder_sano_CoefsPredVSCi);
-    end
-    if ~exist(dest_folder_sano_PAMoriginal, 'dir')
-        mkdir(dest_folder_sano_PAMoriginal);
-    end
-    if ~exist(dest_folder_sano_Step, 'dir')
-        mkdir(dest_folder_sano_Step);
-    end
-
-    % PARA TECS:
-    if ~exist(dest_folder_tec_CoefsPredVSCd, 'dir')
-        mkdir(dest_folder_tec_CoefsPredVSCd);
-    end
-    if ~exist(dest_folder_tec_CoefsPredVSCi, 'dir')
-        mkdir(dest_folder_tec_CoefsPredVSCi);
-    end
-    if ~exist(dest_folder_tec_PAMoriginal, 'dir')
-        mkdir(dest_folder_tec_PAMoriginal);
-    end
-    if ~exist(dest_folder_tec_Step, 'dir')
-        mkdir(dest_folder_tec_Step);
-    end
-    %{
-    %SANO
-    if ~exist(dest_folder_sano_pam_tensor3d, 'dir')
-        mkdir(dest_folder_sano_pam_tensor3d);
-    end
-    %TEC
-    if ~exist(dest_folder_tec_pam_tensor3d, 'dir')
-        mkdir(dest_folder_tec_pam_tensor3d);
-    end
-    %}
-    
-
-    % COPIADO DE CARPETAS EN LOS DIRECTORIOS DESTINO:
-    % PARA SANOS:
-    if exist(source_folder_sano_CoefsPredVSCd, 'dir')
-        copyfile(source_folder_sano_CoefsPredVSCd, dest_folder_sano_CoefsPredVSCd);
-    else
-        warning('La carpeta de origen %s no existe.', source_folder_sano_CoefsPredVSCd);
-    end
-    if exist(source_folder_sano_CoefsPredVSCi, 'dir')
-        copyfile(source_folder_sano_CoefsPredVSCi, dest_folder_sano_CoefsPredVSCi);
-    else
-        warning('La carpeta de origen %s no existe.', source_folder_sano_CoefsPredVSCi);
-    end
-    if exist(source_folder_sano_PAMoriginal, 'dir')
-        copyfile(source_folder_sano_PAMoriginal, dest_folder_sano_PAMoriginal);
-    else
-        warning('La carpeta de origen %s no existe.', source_folder_sano_PAMoriginal);
-    end
-    if exist(source_folder_sano_Step, 'dir')
-        copyfile(source_folder_sano_Step, dest_folder_sano_Step);
-    else
-        warning('La carpeta de origen %s no existe.', source_folder_sano_Step);
-    end
-
-    % PARA TECS:
-    if exist(source_folder_tec_CoefsPredVSCd, 'dir')
-        copyfile(source_folder_tec_CoefsPredVSCd, dest_folder_tec_CoefsPredVSCd);
-    else
-        warning('La carpeta de origen %s no existe.', source_folder_tec_CoefsPredVSCd);
-    end
-    if exist(source_folder_tec_CoefsPredVSCi, 'dir')
-        copyfile(source_folder_tec_CoefsPredVSCi, dest_folder_tec_CoefsPredVSCi);
-    else
-        warning('La carpeta de origen %s no existe.', source_folder_tec_CoefsPredVSCi);
-    end
-    if exist(source_folder_tec_PAMoriginal, 'dir')
-        copyfile(source_folder_tec_PAMoriginal, dest_folder_tec_PAMoriginal);
-    else
-        warning('La carpeta de origen %s no existe.', source_folder_tec_PAMoriginal);
-    end
-    if exist(source_folder_tec_Step, 'dir')
-        copyfile(source_folder_tec_Step, dest_folder_tec_Step);
-    else
-        warning('La carpeta de origen %s no existe.', source_folder_tec_Step);
-    end
-
-
-
-    %{
-    % Copiar la carpeta "PAMnoises_matrixcomplex_npy_tensor3d" para SANOS
-    if exist(source_folder_sano_pam_tensor3d, 'dir')
-        copyfile(source_folder_sano_pam_tensor3d, dest_folder_sano_pam_tensor3d);
-    else
-        warning('La carpeta de origen %s no existe.', source_folder_sano_pam_tensor3d);
-    end
-    % Copiar la carpeta "PAMnoises_matrixcomplex_npy_tensor3d" para TEC
-    if exist(source_folder_tec_pam_tensor3d, 'dir')
-        copyfile(source_folder_tec_pam_tensor3d, dest_folder_tec_pam_tensor3d);
-    else
-        warning('La carpeta de origen %s no existe.', source_folder_tec_pam_tensor3d);
-    end
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %VSCd
-    % Directorios de origen
-    source_folder_sano_vscd_tensor3d = fullfile(direct_sanos_to_copy, foldernames_sanos{i}, 'VSCdnoises_matrixcomplex_npy_tensor3d');
-    source_folder_tec_vscd_tensor3d = fullfile(direct_tecs_to_copy, foldernames_tecs{i}, 'VSCdnoises_matrixcomplex_npy_tensor3d');
-    % Directorios de destino
-    dest_folder_sano_vscd_tensor3d = fullfile(direct_sanos, foldernames_sanos{i}, 'VSCdnoises_matrixcomplex_npy_tensor3d');
-    dest_folder_tec_vscd_tensor3d = fullfile(direct_tecs, foldernames_tecs{i}, 'VSCdnoises_matrixcomplex_npy_tensor3d');
-    % Se crean directorios si no existen:
-    %SANO
-    if ~exist(dest_folder_sano_vscd_tensor3d, 'dir')
-        mkdir(dest_folder_sano_vscd_tensor3d);
-    end
-    %TEC
-    if ~exist(dest_folder_tec_vscd_tensor3d, 'dir')
-        mkdir(dest_folder_tec_vscd_tensor3d);
-    end
- 
-    % Copiar la carpeta "VSCdnoises_matrixcomplex_npy_tensor3d" para SANOS
-    if exist(source_folder_sano_vscd_tensor3d, 'dir')
-        copyfile(source_folder_sano_vscd_tensor3d, dest_folder_sano_vscd_tensor3d);
-    else
-        warning('La carpeta de origen %s no existe.', source_folder_sano_vscd_tensor3d);
-    end
-    % Copiar la carpeta "VSCdnoises_matrixcomplex_npy_tensor3d" para TEC
-    if exist(source_folder_tec_vscd_tensor3d, 'dir')
-        copyfile(source_folder_tec_vscd_tensor3d, dest_folder_tec_vscd_tensor3d);
-    else
-        warning('La carpeta de origen %s no existe.', source_folder_tec_vscd_tensor3d);
-    end
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %VSCi
-    % Directorios de origen
-    source_folder_sano_vsci_tensor3d = fullfile(direct_sanos_to_copy, foldernames_sanos{i}, 'VSCinoises_matrixcomplex_npy_tensor3d');
-    source_folder_tec_vsci_tensor3d = fullfile(direct_tecs_to_copy, foldernames_tecs{i}, 'VSCinoises_matrixcomplex_npy_tensor3d');
-    % Directorios de destino
-    dest_folder_sano_vsci_tensor3d = fullfile(direct_sanos, foldernames_sanos{i}, 'VSCinoises_matrixcomplex_npy_tensor3d');
-    dest_folder_tec_vsci_tensor3d = fullfile(direct_tecs, foldernames_tecs{i}, 'VSCinoises_matrixcomplex_npy_tensor3d');
-    % Se crean directorios si no existen:
-    %SANO
-    if ~exist(dest_folder_sano_vsci_tensor3d, 'dir')
-        mkdir(dest_folder_sano_vsci_tensor3d);
-    end
-    %TEC
-    if ~exist(dest_folder_tec_vsci_tensor3d, 'dir')
-        mkdir(dest_folder_tec_vsci_tensor3d);
-    end
- 
-    % Copiar la carpeta "VSCdnoises_matrixcomplex_npy_tensor3d" para SANOS
-    if exist(source_folder_sano_vsci_tensor3d, 'dir')
-        copyfile(source_folder_sano_vsci_tensor3d, dest_folder_sano_vsci_tensor3d);
-    else
-        warning('La carpeta de origen %s no existe.', source_folder_sano_vsci_tensor3d);
-    end
-    % Copiar la carpeta "VSCdnoises_matrixcomplex_npy_tensor3d" para TEC
-    if exist(source_folder_tec_vsci_tensor3d, 'dir')
-        copyfile(source_folder_tec_vsci_tensor3d, dest_folder_tec_vsci_tensor3d);
-    else
-        warning('La carpeta de origen %s no existe.', source_folder_tec_vsci_tensor3d);
-    end
-    %}
-end
-
-
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-%%%%%%%% PARA COPIAR LA CARPETA DE PAM-ORIGINAL-MATRIXCOMPLEX %%%%%%%%%%%%%
-%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-% Copiar las carpetas asociadas a los inputs y outputs para el
-% el entrenamiento de la red (carpetas tensores 3d)
-for i = 1:num_people
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %PAM
-    % Directorios de destino
-    dest_folder_sano_coefs_pred_vscd = fullfile(direct_sanos, foldernames_sanos{i}, 'CoefficientsPredicted_VSCd');
-    dest_folder_sano_coefs_pred_vsci = fullfile(direct_sanos, foldernames_sanos{i}, 'CoefficientsPredicted_VSCi');
-
-    dest_folder_tec_coefs_pred_vscd = fullfile(direct_tecs, foldernames_tecs{i}, 'CoefficientsPredicted_VSCd');
-    dest_folder_tec_coefs_pred_vsci = fullfile(direct_tecs, foldernames_tecs{i}, 'CoefficientsPredicted_VSCi');
-    % Se crean directorios si no existen:
-    %SANO
-    if ~exist(dest_folder_sano_coefs_pred_vscd, 'dir')
-        mkdir(dest_folder_sano_coefs_pred_vscd);
-    end
-    if ~exist(dest_folder_sano_coefs_pred_vsci, 'dir')
-        mkdir(dest_folder_sano_coefs_pred_vsci);
-    end
-    %TEC
-    if ~exist(dest_folder_tec_coefs_pred_vscd, 'dir')
-        mkdir(dest_folder_tec_coefs_pred_vscd);
-    end
-    if ~exist(dest_folder_tec_coefs_pred_vsci, 'dir')
-        mkdir(dest_folder_tec_coefs_pred_vsci);
-    end
-end
-
-
-
-
-
-
-
-
-
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1486,4 +1210,285 @@ save(fullfile(dir_structs_sano, 'struct_step_sanos_norm.mat'), 'struct_step_sano
 dir_structs_tec = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/Estructuras_SANOS_TEC/');
 % Guardar la una estructuras generales del escalon inverso unitario de cada paciente TEC en un archivo .mat
 save(fullfile(dir_structs_tec, 'struct_step_tecs_norm.mat'), 'struct_step_tecs_norm');
+
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%% COPIADO DE CARPETAS A NUEVOS DIRECTORIOS DESDE DIRECOTRIO BASE A DIRECTORIO CON LOS INPUTS PARA LA RED PARA %%%%% 
+%%%%%%%%%%%%%% PREDECIR LA SEÑAL VSC                                                                                         %%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+% Directorios para predecir el output por medio de la red unet
+% Directorios origen
+direct_sanos_to_copy = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm/SANOS';
+direct_tecs_to_copy = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm/TEC';
+% Directorios destino
+direct_sanos = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormPredictions/SANOS';
+direct_tecs = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Normpredictions/TEC';
+% Directorios para guardar los I/O para entrenar la red:
+direct_sanos_train = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormTraining/SANOS';
+direct_tecs_train = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormTraining/TEC';
+
+
+% Obtener los nombres de las carpetas dentro del directorio de SANOS
+folders_sanos = dir(direct_sanos_to_copy);
+foldernames_sanos = {folders_sanos([folders_sanos.isdir]).name}; % se obtiene los nombres de las carpetas
+% Eliminar los nombres '.' y '..' que representan el directorio actual y el directorio padre
+foldernames_sanos = setdiff(foldernames_sanos, {'.', '..'}); % vector fila que almacena los nombres de todas las carpetas de sujetos sanos
+
+% Obtener los nombres de las carpetas dentro del directorio de TEC
+folders_tecs = dir(direct_tecs_to_copy);
+foldernames_tecs = {folders_tecs([folders_tecs.isdir]).name}; % se obtiene los nombres de las carpetas
+% Eliminar los nombres '.' y '..' que representan el directorio actual y el directorio padre
+foldernames_tecs = setdiff(foldernames_tecs, {'.', '..'}); % vector fila que almacena los nombres de todas las carpetas de pacientes TEC
+
+
+% Copiar las carpetas asociadas a los inputs y outputs para el
+% el entrenamiento de la red (carpetas tensores 3d)
+for i = 1:num_people
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %PAM
+    % Directorios de origen
+    source_folder_sano_pam_tensor3d = fullfile(direct_sanos_to_copy, foldernames_sanos{i}, 'PAMnoises_matrixcomplex_npy_tensor3d');
+    source_folder_tec_pam_tensor3d = fullfile(direct_tecs_to_copy, foldernames_tecs{i}, 'PAMnoises_matrixcomplex_npy_tensor3d');
+    % Directorios de destino
+    dest_folder_sano_pam_tensor3d = fullfile(direct_sanos_train, foldernames_sanos{i}, 'PAMnoises_matrixcomplex_npy_tensor3d');
+    dest_folder_tec_pam_tensor3d = fullfile(direct_tecs_train, foldernames_tecs{i}, 'PAMnoises_matrixcomplex_npy_tensor3d');
+
+
+    %DIRECTORIOS ORIGEN
+    % OBTENCION DE LAS CARPETAS SOLICITADAS DE LOS SUJETOS SANOS
+    source_folder_sano_CoefsPredVSCd = fullfile(direct_sanos_to_copy, foldernames_sanos{i}, 'CoefficientsPredicted_VSCd');
+    source_folder_sano_CoefsPredVSCi = fullfile(direct_sanos_to_copy, foldernames_sanos{i}, 'CoefficientsPredicted_VSCi');
+    source_folder_sano_PAMoriginal = fullfile(direct_sanos_to_copy, foldernames_sanos{i}, 'PAMoriginal_matrixcomplex');
+    source_folder_sano_Step = fullfile(direct_sanos_to_copy, foldernames_sanos{i}, 'step');
+    % OBTENCION DE LAS CARPETAS SOLICITADAS DE LOS PACIENTES TEC
+    source_folder_tec_CoefsPredVSCd = fullfile(direct_tecs_to_copy, foldernames_tecs{i}, 'CoefficientsPredicted_VSCd');
+    source_folder_tec_CoefsPredVSCi = fullfile(direct_tecs_to_copy, foldernames_tecs{i}, 'CoefficientsPredicted_VSCi');
+    source_folder_tec_PAMoriginal = fullfile(direct_tecs_to_copy, foldernames_tecs{i}, 'PAMoriginal_matrixcomplex');
+    source_folder_tec_Step = fullfile(direct_tecs_to_copy, foldernames_tecs{i}, 'step');
+
+
+    % DIRECTORIOS DESTINO
+    % CREACION DE LAS CARPETAS NECESARIAS PARA SUJETOS SANOS
+    dest_folder_sano_CoefsPredVSCd = fullfile(direct_sanos, foldernames_sanos{i}, 'CoefficientsPredicted_VSCd');
+    dest_folder_sano_CoefsPredVSCi = fullfile(direct_sanos, foldernames_sanos{i}, 'CoefficientsPredicted_VSCi');
+    dest_folder_sano_PAMoriginal = fullfile(direct_sanos, foldernames_sanos{i}, 'PAMoriginal_matrixcomplex');
+    dest_folder_sano_Step = fullfile(direct_sanos, foldernames_sanos{i}, 'step');
+    % CREACION DE LAS CARPETAS NECESARIAS PARA PACIENTES TEC
+    dest_folder_tec_CoefsPredVSCd = fullfile(direct_tecs, foldernames_tecs{i}, 'CoefficientsPredicted_VSCd');
+    dest_folder_tec_CoefsPredVSCi = fullfile(direct_tecs, foldernames_tecs{i}, 'CoefficientsPredicted_VSCi');
+    dest_folder_tec_PAMoriginal = fullfile(direct_tecs, foldernames_tecs{i}, 'PAMoriginal_matrixcomplex');
+    dest_folder_tec_Step = fullfile(direct_tecs, foldernames_tecs{i}, 'step');
+    
+   
+    
+    % CREACION DE CARPETAS DESTINO SI NO EXISTEN:
+    % PARA SANOS:
+    if ~exist(dest_folder_sano_CoefsPredVSCd, 'dir')
+        mkdir(dest_folder_sano_CoefsPredVSCd);
+    end
+    if ~exist(dest_folder_sano_CoefsPredVSCi, 'dir')
+        mkdir(dest_folder_sano_CoefsPredVSCi);
+    end
+    if ~exist(dest_folder_sano_PAMoriginal, 'dir')
+        mkdir(dest_folder_sano_PAMoriginal);
+    end
+    if ~exist(dest_folder_sano_Step, 'dir')
+        mkdir(dest_folder_sano_Step);
+    end
+
+    % PARA TECS:
+    if ~exist(dest_folder_tec_CoefsPredVSCd, 'dir')
+        mkdir(dest_folder_tec_CoefsPredVSCd);
+    end
+    if ~exist(dest_folder_tec_CoefsPredVSCi, 'dir')
+        mkdir(dest_folder_tec_CoefsPredVSCi);
+    end
+    if ~exist(dest_folder_tec_PAMoriginal, 'dir')
+        mkdir(dest_folder_tec_PAMoriginal);
+    end
+    if ~exist(dest_folder_tec_Step, 'dir')
+        mkdir(dest_folder_tec_Step);
+    end
+   
+    %SANO
+    if ~exist(dest_folder_sano_pam_tensor3d, 'dir')
+        mkdir(dest_folder_sano_pam_tensor3d);
+    end
+    %TEC
+    if ~exist(dest_folder_tec_pam_tensor3d, 'dir')
+        mkdir(dest_folder_tec_pam_tensor3d);
+    end
+   
+    
+
+    % COPIADO DE CARPETAS EN LOS DIRECTORIOS DESTINO:
+    % PARA SANOS:
+    if exist(source_folder_sano_CoefsPredVSCd, 'dir')
+        copyfile(source_folder_sano_CoefsPredVSCd, dest_folder_sano_CoefsPredVSCd);
+    else
+        warning('La carpeta de origen %s no existe.', source_folder_sano_CoefsPredVSCd);
+    end
+    if exist(source_folder_sano_CoefsPredVSCi, 'dir')
+        copyfile(source_folder_sano_CoefsPredVSCi, dest_folder_sano_CoefsPredVSCi);
+    else
+        warning('La carpeta de origen %s no existe.', source_folder_sano_CoefsPredVSCi);
+    end
+    if exist(source_folder_sano_PAMoriginal, 'dir')
+        copyfile(source_folder_sano_PAMoriginal, dest_folder_sano_PAMoriginal);
+    else
+        warning('La carpeta de origen %s no existe.', source_folder_sano_PAMoriginal);
+    end
+    if exist(source_folder_sano_Step, 'dir')
+        copyfile(source_folder_sano_Step, dest_folder_sano_Step);
+    else
+        warning('La carpeta de origen %s no existe.', source_folder_sano_Step);
+    end
+
+    % PARA TECS:
+    if exist(source_folder_tec_CoefsPredVSCd, 'dir')
+        copyfile(source_folder_tec_CoefsPredVSCd, dest_folder_tec_CoefsPredVSCd);
+    else
+        warning('La carpeta de origen %s no existe.', source_folder_tec_CoefsPredVSCd);
+    end
+    if exist(source_folder_tec_CoefsPredVSCi, 'dir')
+        copyfile(source_folder_tec_CoefsPredVSCi, dest_folder_tec_CoefsPredVSCi);
+    else
+        warning('La carpeta de origen %s no existe.', source_folder_tec_CoefsPredVSCi);
+    end
+    if exist(source_folder_tec_PAMoriginal, 'dir')
+        copyfile(source_folder_tec_PAMoriginal, dest_folder_tec_PAMoriginal);
+    else
+        warning('La carpeta de origen %s no existe.', source_folder_tec_PAMoriginal);
+    end
+    if exist(source_folder_tec_Step, 'dir')
+        copyfile(source_folder_tec_Step, dest_folder_tec_Step);
+    else
+        warning('La carpeta de origen %s no existe.', source_folder_tec_Step);
+    end
+
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+    % Copiar la carpeta "PAMnoises_matrixcomplex_npy_tensor3d" para SANOS
+    if exist(source_folder_sano_pam_tensor3d, 'dir')
+        copyfile(source_folder_sano_pam_tensor3d, dest_folder_sano_pam_tensor3d);
+    else
+        warning('La carpeta de origen %s no existe.', source_folder_sano_pam_tensor3d);
+    end
+    % Copiar la carpeta "PAMnoises_matrixcomplex_npy_tensor3d" para TEC
+    if exist(source_folder_tec_pam_tensor3d, 'dir')
+        copyfile(source_folder_tec_pam_tensor3d, dest_folder_tec_pam_tensor3d);
+    else
+        warning('La carpeta de origen %s no existe.', source_folder_tec_pam_tensor3d);
+    end
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %VSCd
+    % Directorios de origen
+    source_folder_sano_vscd_tensor3d = fullfile(direct_sanos_to_copy, foldernames_sanos{i}, 'VSCdnoises_matrixcomplex_npy_tensor3d');
+    source_folder_tec_vscd_tensor3d = fullfile(direct_tecs_to_copy, foldernames_tecs{i}, 'VSCdnoises_matrixcomplex_npy_tensor3d');
+    % Directorios de destino
+    dest_folder_sano_vscd_tensor3d = fullfile(direct_sanos_train, foldernames_sanos{i}, 'VSCdnoises_matrixcomplex_npy_tensor3d');
+    dest_folder_tec_vscd_tensor3d = fullfile(direct_tecs_train, foldernames_tecs{i}, 'VSCdnoises_matrixcomplex_npy_tensor3d');
+    % Se crean directorios si no existen:
+    %SANO
+    if ~exist(dest_folder_sano_vscd_tensor3d, 'dir')
+        mkdir(dest_folder_sano_vscd_tensor3d);
+    end
+    %TEC
+    if ~exist(dest_folder_tec_vscd_tensor3d, 'dir')
+        mkdir(dest_folder_tec_vscd_tensor3d);
+    end
+ 
+    % Copiar la carpeta "VSCdnoises_matrixcomplex_npy_tensor3d" para SANOS
+    if exist(source_folder_sano_vscd_tensor3d, 'dir')
+        copyfile(source_folder_sano_vscd_tensor3d, dest_folder_sano_vscd_tensor3d);
+    else
+        warning('La carpeta de origen %s no existe.', source_folder_sano_vscd_tensor3d);
+    end
+    % Copiar la carpeta "VSCdnoises_matrixcomplex_npy_tensor3d" para TEC
+    if exist(source_folder_tec_vscd_tensor3d, 'dir')
+        copyfile(source_folder_tec_vscd_tensor3d, dest_folder_tec_vscd_tensor3d);
+    else
+        warning('La carpeta de origen %s no existe.', source_folder_tec_vscd_tensor3d);
+    end
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %VSCi
+    % Directorios de origen
+    source_folder_sano_vsci_tensor3d = fullfile(direct_sanos_to_copy, foldernames_sanos{i}, 'VSCinoises_matrixcomplex_npy_tensor3d');
+    source_folder_tec_vsci_tensor3d = fullfile(direct_tecs_to_copy, foldernames_tecs{i}, 'VSCinoises_matrixcomplex_npy_tensor3d');
+    % Directorios de destino
+    dest_folder_sano_vsci_tensor3d = fullfile(direct_sanos_train, foldernames_sanos{i}, 'VSCinoises_matrixcomplex_npy_tensor3d');
+    dest_folder_tec_vsci_tensor3d = fullfile(direct_tecs_train, foldernames_tecs{i}, 'VSCinoises_matrixcomplex_npy_tensor3d');
+    % Se crean directorios si no existen:
+    %SANO
+    if ~exist(dest_folder_sano_vsci_tensor3d, 'dir')
+        mkdir(dest_folder_sano_vsci_tensor3d);
+    end
+    %TEC
+    if ~exist(dest_folder_tec_vsci_tensor3d, 'dir')
+        mkdir(dest_folder_tec_vsci_tensor3d);
+    end
+ 
+    % Copiar la carpeta "VSCdnoises_matrixcomplex_npy_tensor3d" para SANOS
+    if exist(source_folder_sano_vsci_tensor3d, 'dir')
+        copyfile(source_folder_sano_vsci_tensor3d, dest_folder_sano_vsci_tensor3d);
+    else
+        warning('La carpeta de origen %s no existe.', source_folder_sano_vsci_tensor3d);
+    end
+    % Copiar la carpeta "VSCdnoises_matrixcomplex_npy_tensor3d" para TEC
+    if exist(source_folder_tec_vsci_tensor3d, 'dir')
+        copyfile(source_folder_tec_vsci_tensor3d, dest_folder_tec_vsci_tensor3d);
+    else
+        warning('La carpeta de origen %s no existe.', source_folder_tec_vsci_tensor3d);
+    end
+    
+end
+
+
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%% PARA COPIAR LA CARPETA DE PAM-ORIGINAL-MATRIXCOMPLEX %%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Copiar las carpetas asociadas a los inputs y outputs para el
+% el entrenamiento de la red (carpetas tensores 3d)
+for i = 1:num_people
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %PAM
+    % Directorios de destino
+    dest_folder_sano_coefs_pred_vscd = fullfile(direct_sanos, foldernames_sanos{i}, 'CoefficientsPredicted_VSCd');
+    dest_folder_sano_coefs_pred_vsci = fullfile(direct_sanos, foldernames_sanos{i}, 'CoefficientsPredicted_VSCi');
+
+    dest_folder_tec_coefs_pred_vscd = fullfile(direct_tecs, foldernames_tecs{i}, 'CoefficientsPredicted_VSCd');
+    dest_folder_tec_coefs_pred_vsci = fullfile(direct_tecs, foldernames_tecs{i}, 'CoefficientsPredicted_VSCi');
+    % Se crean directorios si no existen:
+    %SANO
+    if ~exist(dest_folder_sano_coefs_pred_vscd, 'dir')
+        mkdir(dest_folder_sano_coefs_pred_vscd);
+    end
+    if ~exist(dest_folder_sano_coefs_pred_vsci, 'dir')
+        mkdir(dest_folder_sano_coefs_pred_vsci);
+    end
+    %TEC
+    if ~exist(dest_folder_tec_coefs_pred_vscd, 'dir')
+        mkdir(dest_folder_tec_coefs_pred_vscd);
+    end
+    if ~exist(dest_folder_tec_coefs_pred_vsci, 'dir')
+        mkdir(dest_folder_tec_coefs_pred_vsci);
+    end
+end
+
+
+
 
