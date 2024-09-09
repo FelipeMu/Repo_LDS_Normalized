@@ -1090,8 +1090,8 @@ cut_freq = 0.3;
 % CREACION DE ESTRUCTURA QUE GUARDARA INFORMACION DE LOS ESCALONES DE CADA
 % INDIVIDUO. struct_steps_sanos{struct_step, struct_step, ...} y
 % struct_steps_tecs{struct_step, struct_step, ...}
-struct_step_sanos_norm(num_people) = struct('nombre', '','coefs_step', [], 'scalscfs_step', [], 'psif_step', [], 'freqs_step', [], 'signal_step', []);%SANOS
-struct_step_tecs_norm(num_people) = struct('nombre', '','coefs_step', [], 'scalscfs_step', [], 'psif_step', [], 'freqs_step', [], 'signal_step', []);%TECS
+struct_step_sanos_norm_transient(num_people) = struct('nombre', '','coefs_step', [], 'scalscfs_step', [], 'psif_step', [], 'freqs_step', [], 'signal_step', []);%SANOS
+struct_step_tecs_norm_transient(num_people) = struct('nombre', '','coefs_step', [], 'scalscfs_step', [], 'psif_step', [], 'freqs_step', [], 'signal_step', []);%TECS
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1100,8 +1100,22 @@ struct_step_tecs_norm(num_people) = struct('nombre', '','coefs_step', [], 'scals
 % Llamada a funcion que crea el escalon y lo nomraliza con min-max:
 step_norm = get_step_normalized(Ts, butterworth_order, cut_freq);
 
-
-
+%{
+% Crear el vector de tiempo
+t = (0:length(step_norm)-1) * 0.2;
+% Graficar el escalon unitario inverso para ver el comportamiento teorico
+figure;
+plot(t, step_norm, 'LineWidth', 2);
+hold on;
+xlabel('Tiempo (s)');
+ylabel('cm/s');
+title('Escalón Unitario Inverso (PRE): Suavizado con Filtro Butterworth 2do orden - Freq de corte de 0.3 [Hz] y periodo de muestreo de 0.2 [seg]');
+legend('Suavizado');
+%xlim([190 end]);
+grid on;
+% Ajustar los marcadores del eje x para que vayan de 1 en 1 segundos
+xticks(0:5:max(t));
+%}
 
 
 %bucle para recorrer todos los sujetos SANOS y luego pacientes TEC:
@@ -1117,15 +1131,16 @@ for i = 1:num_people
     %CALCULO DE LA CWT() PARA OBTENER LOS COEFICIENTES (INPUT DE LA RED)
     [coefs_step, freqs_step, scalscfs_step, psif_step] = cwt(escalon_inverso_unitario_persona_sana);
     %ASIGNAR INFORMACION DE LA PERSONA SANA A SU RESPECTIVA ESTRUCTURA
-    struct_step_sanos_norm(i).nombre = persona_sana.name_file;
-    struct_step_sanos_norm(i).coefs_step = coefs_step;
-    struct_step_sanos_norm(i).freqs_step = freqs_step;
-    struct_step_sanos_norm(i).scalscfs_step = scalscfs_step;
-    struct_step_sanos_norm(i).psif_step = psif_step;
-    struct_step_sanos_norm(i).signal_step = escalon_inverso_unitario_persona_sana;
+    struct_step_sanos_norm_transient(i).nombre = persona_sana.name_file;
+    struct_step_sanos_norm_transient(i).coefs_step = coefs_step;
+    struct_step_sanos_norm_transient(i).freqs_step = freqs_step;
+    struct_step_sanos_norm_transient(i).scalscfs_step = scalscfs_step;
+    struct_step_sanos_norm_transient(i).psif_step = psif_step;
+    struct_step_sanos_norm_transient(i).signal_step = escalon_inverso_unitario_persona_sana;
     
     %SE CREA CARPETA QUE GUARDARA EL ESCALON DE LA PERSONA SANA:
-    dir_step_sano = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm/SANOS/', persona_sana.name_file, '/step');
+    %dir_step_sano = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm/SANOS/', persona_sana.name_file, '/step');
+    dir_step_sano = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm_Transient/SANOS/', persona_sana.name_file, '/step');
     %%%% SANO %%%%
     if ~exist(dir_step_sano, 'dir')
         mkdir(dir_step_sano);
@@ -1144,15 +1159,16 @@ for i = 1:num_people
     %CALCULO DE LA CWT() PARA OBTENER LOS COEFICIENTES (INPUT DE LA RED)
     [coefs_step, freqs_step, scalscfs_step, psif_step] = cwt(escalon_inverso_unitario_persona_tec);
     %ASIGNAR INFORMACION DE LA PERSONA TEC A SU RESPECTIVA ESTRUCTURA
-    struct_step_tecs_norm(i).nombre = persona_tec.name_file;
-    struct_step_tecs_norm(i).coefs_step = coefs_step;
-    struct_step_tecs_norm(i).freqs_step = freqs_step;
-    struct_step_tecs_norm(i).scalscfs_step = scalscfs_step;
-    struct_step_tecs_norm(i).psif_step = psif_step;
-    struct_step_tecs_norm(i).signal_step = escalon_inverso_unitario_persona_tec;
+    struct_step_tecs_norm_transient(i).nombre = persona_tec.name_file;
+    struct_step_tecs_norm_transient(i).coefs_step = coefs_step;
+    struct_step_tecs_norm_transient(i).freqs_step = freqs_step;
+    struct_step_tecs_norm_transient(i).scalscfs_step = scalscfs_step;
+    struct_step_tecs_norm_transient(i).psif_step = psif_step;
+    struct_step_tecs_norm_transient(i).signal_step = escalon_inverso_unitario_persona_tec;
     
     %SE CREA CARPETA QUE GUARDARA EL ESCALON DE LA PERSONA TEC:
-    dir_step_tec = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm/TEC/', persona_tec.name_file, '/step');
+    %dir_step_tec = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm/TEC/', persona_tec.name_file, '/step');
+    dir_step_tec = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm_Transient/TEC/', persona_tec.name_file, '/step');
     %%%% TEC %%%%
     if ~exist(dir_step_tec, 'dir')
         mkdir(dir_step_tec);
@@ -1204,12 +1220,12 @@ xticks(0:5:max(t));
 % SE GUARDA ESTRUCTURA ASOCIADA A LOS SANOS EN FORMATO .mat
 dir_structs_sano = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/Estructuras_SANOS_TEC/');
 % Guardar la una estructuras generales del escalon inverso unitario de cada sujeto SANO en un archivo .mat
-save(fullfile(dir_structs_sano, 'struct_step_sanos_norm.mat'), 'struct_step_sanos_norm');
+save(fullfile(dir_structs_sano, 'struct_step_sanos_norm_transient.mat'), 'struct_step_sanos_norm_transient');
 
 % SE GUARDA ESTRUCTURA ASOCIADA A LOS TECs EN FORMATO .mat
 dir_structs_tec = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/Estructuras_SANOS_TEC/');
 % Guardar la una estructuras generales del escalon inverso unitario de cada paciente TEC en un archivo .mat
-save(fullfile(dir_structs_tec, 'struct_step_tecs_norm.mat'), 'struct_step_tecs_norm');
+save(fullfile(dir_structs_tec, 'struct_step_tecs_norm_transient.mat'), 'struct_step_tecs_norm_transient');
 
 
 
