@@ -4,3 +4,6 @@ codigo_matlab/codigo_fuente/Estructuras_SANOS_TEC/
 codigo_matlab/codigo_fuente/signals_LDS_NormTraining/
 codigo_matlab/codigo_fuente/signals_LDS_NormPredictions/
 codigo_matlab/codigo_fuente/signals_LDS_Norm_Transient/
+codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5/
+codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5Predictions/
+codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5Training/

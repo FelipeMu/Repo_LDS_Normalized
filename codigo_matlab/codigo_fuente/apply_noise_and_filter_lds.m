@@ -1,8 +1,8 @@
 function [struct_lds_sano_norm, struct_lds_tec_norm] = apply_noise_and_filter_lds(struct_lds_sano_norm, struct_lds_tec_norm, sampling_freq, len_signals_noises)
     
     % Carpeta donde se guardaran los nuevos archivos CSV con ruido (generar  D:\TT\Memoria\waveletycnn\codigo_matlab\codigo_fuente\signals_LDS\SANOS
-    output_folder_sanos = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm/SANOS';
-    output_folder_tec = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm/TEC';
+    output_folder_sanos = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5/SANOS';
+    output_folder_tec = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5/TEC';
 
     % Parametros de ruido gaussiano
     cv_inf = 0;

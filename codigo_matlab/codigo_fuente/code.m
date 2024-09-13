@@ -41,7 +41,7 @@ num_people = 27;
 
 % Directorios y configuracion
 sourceDirectory_sano = 'D:\TT\Memoria\CodigoFuenteNormalized\codigo_matlab\codigo_fuente\LDS\DATOS_SANOS_PAR';
-destinationDirectory_sano = 'D:\TT\Memoria\CodigoFuenteNormalized\codigo_matlab\codigo_fuente\signals_LDS_Norm\SANOS';
+destinationDirectory_sano = 'D:\TT\Memoria\CodigoFuenteNormalized\codigo_matlab\codigo_fuente\signals_LDS_NormNoiseMax5\SANOS';
 
 % Obtener la lista de archivos .PAR en el directorio
 fileList_sano = dir(fullfile(sourceDirectory_sano, '*.PAR'));
@@ -118,7 +118,7 @@ end
 
 % Directorios y configuracion
 sourceDirectory_tec = 'D:\TT\Memoria\CodigoFuenteNormalized\codigo_matlab\codigo_fuente\LDS\DATOS_TEC_PAR';
-destinationDirectory_tec = 'D:\TT\Memoria\CodigoFuenteNormalized\codigo_matlab\codigo_fuente\signals_LDS_Norm\TEC';
+destinationDirectory_tec = 'D:\TT\Memoria\CodigoFuenteNormalized\codigo_matlab\codigo_fuente\signals_LDS_NormNoiseMax5\TEC';
 
 % Obtener la lista de archivos .PAR en el directorio
 fileList_tec = dir(fullfile(sourceDirectory_tec, '*.PAR'));
@@ -143,7 +143,7 @@ for i = 1:num_people
         columnsToRead_tec = 1:3;
     else
         delimiter_tec = ' ';
-        columnsToRead_tec = 3:5;
+        columnsToRead_tec = 2:4;
         
     end
     % Leer el archivo de texto
@@ -201,7 +201,7 @@ fs = 1.0 / ts; % Hz
 %===============================================================================================================================
 % Se obtienen los nombres de todas las carpetas existentes en el direccion
 % path_sano: 27 sujetos en total
-path_sano = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm/SANOS';
+path_sano = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5/SANOS';
 % Obtener los nombres de las carpetas dentro del directorio
 folder_structs_sano = dir(path_sano);
 folder_names_sano = {folder_structs_sano([folder_structs_sano.isdir]).name}; % se obtiene los nombres de las carpetas
@@ -211,7 +211,7 @@ folder_names_sano = setdiff(folder_names_sano, {'.', '..'}); % vector fila que a
 % Se obtienen los nombres de todas las carpetas existentes en el direccion
 % path_files_signals. Carpetas a seleccionar --> PAMnoises, VSCdnoises,
 % VSCinoises
-path_files_signals_sano = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm/SANOS/1_HEMU'; % Se elige 1_HEMU al azar, todos los sujetos tienen las mismas carpetas asociadas a las senales con ruido
+path_files_signals_sano = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5/SANOS/1_HEMU'; % Se elige 1_HEMU al azar, todos los sujetos tienen las mismas carpetas asociadas a las senales con ruido
 % Obtener los nombres de las carpetas dentro del directorio
 folder_signals_sano = dir(path_files_signals_sano);
 folder_names_signals_sano = {folder_signals_sano([folder_signals_sano.isdir]).name}; % se obtiene los nombres de las carpetas
@@ -225,7 +225,7 @@ folder_names_signals_sano = setdiff(folder_names_signals_sano, {'.', '..'}); % v
 %===============================================================================================================================
 % Se obtienen los nombres de todas las carpetas existentes en el direccion
 % path_sano: 27 sujetos en total
-path_tec = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm/TEC';
+path_tec = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5/TEC';
 % Obtener los nombres de las carpetas dentro del directorio
 folder_structs_tec = dir(path_tec);
 folder_names_tec = {folder_structs_tec([folder_structs_tec.isdir]).name}; % se obtiene los nombres de las carpetas
@@ -235,7 +235,7 @@ folder_names_tec = setdiff(folder_names_tec, {'.', '..'}); % vector fila que alm
 % Se obtienen los nombres de todas las carpetas existentes en el direccion
 % path_files_signals. Carpetas a seleccionar --> PAMnoises, VSCdnoises,
 % VSCinoises
-path_files_signals_tec = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm/TEC/1_DENI1005'; % Se elige 1_DENI1005 al azar, todos los sujetos tienen las mismas carpetas asociadas a las senales con ruido
+path_files_signals_tec = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5/TEC/1_DENI1005'; % Se elige 1_DENI1005 al azar, todos los sujetos tienen las mismas carpetas asociadas a las senales con ruido
 % Obtener los nombres de las carpetas dentro del directorio
 folder_signals_tec = dir(path_files_signals_tec);
 folder_names_signals_tec = {folder_signals_tec([folder_signals_tec.isdir]).name}; % se obtiene los nombres de las carpetas
@@ -571,7 +571,7 @@ directory_structs = 'D:\TT\Memoria\CodigoFuenteNormalized\codigo_matlab\codigo_f
 
 %============== Sanos ==================================================
 % Especifica el nombre del archivo
-filename_struct_sano = 'struct_lds_sano_norm.mat';
+filename_struct_sano = 'struct_lds_sano_norm_noisemax5.mat';
 % Crea la ruta completa del archivo
 filepath_struct_sano = fullfile(directory_structs, filename_struct_sano);
 % Guarda la estructura en el archivo .mat
@@ -581,7 +581,7 @@ fprintf("(*) La estructura para sujetos sanos normalizados se ha guardado correc
 
 %============== TEC ==================================================
 % Especifica el nombre del archivo
-filename_struct_tec = 'struct_lds_tec_norm.mat';
+filename_struct_tec = 'struct_lds_tec_norm_noisemax5.mat';
 % Crea la ruta completa del archivo
 filepath_struct_tec = fullfile(directory_structs, filename_struct_tec);
 % Guarda la estructura en el archivo .mat
@@ -595,14 +595,14 @@ fprintf("(*) La estructura para pacientes TEC normalizados se ha guardado correc
 %%%%%%%%%%%%%%%%%% GUARDAR MATRICES COMPLEJAS (COEFICIENTES) EN FORMATO ".mat" -> ENTRENAR RED U-NET %%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-
+% *** recordar la nueva estructura si es que se ha creada o modificado ***
 
 % Almacenar matrices complejas pam y vsc en carpetas especificas para 
 % luego trabajar con la red profunda en python. Para ello se importan 
 % las matrices en formato.mat y luego en python se utiliza un script
 % para transformar dicho formato a npy.
-direct_sanos = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/Signals_LDS_Norm/SANOS';
-direct_tecs = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/Signals_LDS_Norm/TEC';
+direct_sanos = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/Signals_LDS_NormNoiseMax5/SANOS';
+direct_tecs = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/Signals_LDS_NormNoiseMax5/TEC';
 
 % Obtener los nombres de las carpetas dentro del directorio de SANOS
 folders_sanos = dir(direct_sanos);
@@ -761,7 +761,8 @@ for i = 1:num_people
     matrix_complex_original_vsci_tec = person_tec.struct_original_VSCi(1).matrix_complex_original_vsci;
     save(fullfile(direct_final_cfs_original_vsci_tec, 'matrix_complex_original_vsci.mat'), 'matrix_complex_original_vsci_tec');
 end
-
+%... EJECUTAR PYTHON JUPYTER COLAB PARA PASAR DE .mat a .py CADA MATRIZ 
+% DE COEFICIENTES GENERADA (matriz_complex)
 
 
 
@@ -1090,8 +1091,8 @@ cut_freq = 0.3;
 % CREACION DE ESTRUCTURA QUE GUARDARA INFORMACION DE LOS ESCALONES DE CADA
 % INDIVIDUO. struct_steps_sanos{struct_step, struct_step, ...} y
 % struct_steps_tecs{struct_step, struct_step, ...}
-struct_step_sanos_norm_transient(num_people) = struct('nombre', '','coefs_step', [], 'scalscfs_step', [], 'psif_step', [], 'freqs_step', [], 'signal_step', []);%SANOS
-struct_step_tecs_norm_transient(num_people) = struct('nombre', '','coefs_step', [], 'scalscfs_step', [], 'psif_step', [], 'freqs_step', [], 'signal_step', []);%TECS
+struct_step_sanos_norm_noisemax5(num_people) = struct('nombre', '','coefs_step', [], 'scalscfs_step', [], 'psif_step', [], 'freqs_step', [], 'signal_step', []);%SANOS
+struct_step_tecs_norm_noisemax5(num_people) = struct('nombre', '','coefs_step', [], 'scalscfs_step', [], 'psif_step', [], 'freqs_step', [], 'signal_step', []);%TECS
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1131,16 +1132,16 @@ for i = 1:num_people
     %CALCULO DE LA CWT() PARA OBTENER LOS COEFICIENTES (INPUT DE LA RED)
     [coefs_step, freqs_step, scalscfs_step, psif_step] = cwt(escalon_inverso_unitario_persona_sana);
     %ASIGNAR INFORMACION DE LA PERSONA SANA A SU RESPECTIVA ESTRUCTURA
-    struct_step_sanos_norm_transient(i).nombre = persona_sana.name_file;
-    struct_step_sanos_norm_transient(i).coefs_step = coefs_step;
-    struct_step_sanos_norm_transient(i).freqs_step = freqs_step;
-    struct_step_sanos_norm_transient(i).scalscfs_step = scalscfs_step;
-    struct_step_sanos_norm_transient(i).psif_step = psif_step;
-    struct_step_sanos_norm_transient(i).signal_step = escalon_inverso_unitario_persona_sana;
+    struct_step_sanos_norm_noisemax5(i).nombre = persona_sana.name_file;
+    struct_step_sanos_norm_noisemax5(i).coefs_step = coefs_step;
+    struct_step_sanos_norm_noisemax5(i).freqs_step = freqs_step;
+    struct_step_sanos_norm_noisemax5(i).scalscfs_step = scalscfs_step;
+    struct_step_sanos_norm_noisemax5(i).psif_step = psif_step;
+    struct_step_sanos_norm_noisemax5(i).signal_step = escalon_inverso_unitario_persona_sana;
     
     %SE CREA CARPETA QUE GUARDARA EL ESCALON DE LA PERSONA SANA:
     %dir_step_sano = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm/SANOS/', persona_sana.name_file, '/step');
-    dir_step_sano = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm_Transient/SANOS/', persona_sana.name_file, '/step');
+    dir_step_sano = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5/SANOS/', persona_sana.name_file, '/step');
     %%%% SANO %%%%
     if ~exist(dir_step_sano, 'dir')
         mkdir(dir_step_sano);
@@ -1159,16 +1160,16 @@ for i = 1:num_people
     %CALCULO DE LA CWT() PARA OBTENER LOS COEFICIENTES (INPUT DE LA RED)
     [coefs_step, freqs_step, scalscfs_step, psif_step] = cwt(escalon_inverso_unitario_persona_tec);
     %ASIGNAR INFORMACION DE LA PERSONA TEC A SU RESPECTIVA ESTRUCTURA
-    struct_step_tecs_norm_transient(i).nombre = persona_tec.name_file;
-    struct_step_tecs_norm_transient(i).coefs_step = coefs_step;
-    struct_step_tecs_norm_transient(i).freqs_step = freqs_step;
-    struct_step_tecs_norm_transient(i).scalscfs_step = scalscfs_step;
-    struct_step_tecs_norm_transient(i).psif_step = psif_step;
-    struct_step_tecs_norm_transient(i).signal_step = escalon_inverso_unitario_persona_tec;
+    struct_step_tecs_norm_noisemax5(i).nombre = persona_tec.name_file;
+    struct_step_tecs_norm_noisemax5(i).coefs_step = coefs_step;
+    struct_step_tecs_norm_noisemax5(i).freqs_step = freqs_step;
+    struct_step_tecs_norm_noisemax5(i).scalscfs_step = scalscfs_step;
+    struct_step_tecs_norm_noisemax5(i).psif_step = psif_step;
+    struct_step_tecs_norm_noisemax5(i).signal_step = escalon_inverso_unitario_persona_tec;
     
     %SE CREA CARPETA QUE GUARDARA EL ESCALON DE LA PERSONA TEC:
     %dir_step_tec = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm/TEC/', persona_tec.name_file, '/step');
-    dir_step_tec = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm_Transient/TEC/', persona_tec.name_file, '/step');
+    dir_step_tec = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5/TEC/', persona_tec.name_file, '/step');
     %%%% TEC %%%%
     if ~exist(dir_step_tec, 'dir')
         mkdir(dir_step_tec);
@@ -1220,12 +1221,12 @@ xticks(0:5:max(t));
 % SE GUARDA ESTRUCTURA ASOCIADA A LOS SANOS EN FORMATO .mat
 dir_structs_sano = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/Estructuras_SANOS_TEC/');
 % Guardar la una estructuras generales del escalon inverso unitario de cada sujeto SANO en un archivo .mat
-save(fullfile(dir_structs_sano, 'struct_step_sanos_norm_transient.mat'), 'struct_step_sanos_norm_transient');
+save(fullfile(dir_structs_sano, 'struct_step_sanos_norm_noisemax5.mat'), 'struct_step_sanos_norm_noisemax5');
 
 % SE GUARDA ESTRUCTURA ASOCIADA A LOS TECs EN FORMATO .mat
 dir_structs_tec = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/Estructuras_SANOS_TEC/');
 % Guardar la una estructuras generales del escalon inverso unitario de cada paciente TEC en un archivo .mat
-save(fullfile(dir_structs_tec, 'struct_step_tecs_norm_transient.mat'), 'struct_step_tecs_norm_transient');
+save(fullfile(dir_structs_tec, 'struct_step_tecs_norm_noisemax5.mat'), 'struct_step_tecs_norm_noisemax5');
 
 
 
@@ -1238,14 +1239,14 @@ save(fullfile(dir_structs_tec, 'struct_step_tecs_norm_transient.mat'), 'struct_s
 
 % Directorios para predecir el output por medio de la red unet
 % Directorios origen
-direct_sanos_to_copy = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm/SANOS';
-direct_tecs_to_copy = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm/TEC';
+direct_sanos_to_copy = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5/SANOS';
+direct_tecs_to_copy = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5/TEC';
 % Directorios destino
-direct_sanos = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormPredictions/SANOS';
-direct_tecs = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Normpredictions/TEC';
+direct_sanos_predict = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5Predictions/SANOS';
+direct_tecs_predict = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5Predictions/TEC';
 % Directorios para guardar los I/O para entrenar la red:
-direct_sanos_train = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormTraining/SANOS';
-direct_tecs_train = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormTraining/TEC';
+direct_sanos_train = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5Training/SANOS';
+direct_tecs_train = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5Training/TEC';
 
 
 % Obtener los nombres de las carpetas dentro del directorio de SANOS
@@ -1263,18 +1264,13 @@ foldernames_tecs = setdiff(foldernames_tecs, {'.', '..'}); % vector fila que alm
 
 % Copiar las carpetas asociadas a los inputs y outputs para el
 % el entrenamiento de la red (carpetas tensores 3d)
+% (*)Estos directorios estan asocidos a la realizacion de la prediccion de la
+% red y al guardados de los outputs que esta devuela.
 for i = 1:num_people
+    %                DIRECTORIOS PARA PREDICCIONES 
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %PAM
-    % Directorios de origen
-    source_folder_sano_pam_tensor3d = fullfile(direct_sanos_to_copy, foldernames_sanos{i}, 'PAMnoises_matrixcomplex_npy_tensor3d');
-    source_folder_tec_pam_tensor3d = fullfile(direct_tecs_to_copy, foldernames_tecs{i}, 'PAMnoises_matrixcomplex_npy_tensor3d');
-    % Directorios de destino
-    dest_folder_sano_pam_tensor3d = fullfile(direct_sanos_train, foldernames_sanos{i}, 'PAMnoises_matrixcomplex_npy_tensor3d');
-    dest_folder_tec_pam_tensor3d = fullfile(direct_tecs_train, foldernames_tecs{i}, 'PAMnoises_matrixcomplex_npy_tensor3d');
-
 
     %DIRECTORIOS ORIGEN
     % OBTENCION DE LAS CARPETAS SOLICITADAS DE LOS SUJETOS SANOS
@@ -1291,19 +1287,19 @@ for i = 1:num_people
 
     % DIRECTORIOS DESTINO
     % CREACION DE LAS CARPETAS NECESARIAS PARA SUJETOS SANOS
-    dest_folder_sano_CoefsPredVSCd = fullfile(direct_sanos, foldernames_sanos{i}, 'CoefficientsPredicted_VSCd');
-    dest_folder_sano_CoefsPredVSCi = fullfile(direct_sanos, foldernames_sanos{i}, 'CoefficientsPredicted_VSCi');
-    dest_folder_sano_PAMoriginal = fullfile(direct_sanos, foldernames_sanos{i}, 'PAMoriginal_matrixcomplex');
-    dest_folder_sano_Step = fullfile(direct_sanos, foldernames_sanos{i}, 'step');
+    dest_folder_sano_CoefsPredVSCd = fullfile(direct_sanos_predict, foldernames_sanos{i}, 'CoefficientsPredicted_VSCd');
+    dest_folder_sano_CoefsPredVSCi = fullfile(direct_sanos_predict, foldernames_sanos{i}, 'CoefficientsPredicted_VSCi');
+    dest_folder_sano_PAMoriginal = fullfile(direct_sanos_predict, foldernames_sanos{i}, 'PAMoriginal_matrixcomplex');
+    dest_folder_sano_Step = fullfile(direct_sanos_predict, foldernames_sanos{i}, 'step');
     % CREACION DE LAS CARPETAS NECESARIAS PARA PACIENTES TEC
-    dest_folder_tec_CoefsPredVSCd = fullfile(direct_tecs, foldernames_tecs{i}, 'CoefficientsPredicted_VSCd');
-    dest_folder_tec_CoefsPredVSCi = fullfile(direct_tecs, foldernames_tecs{i}, 'CoefficientsPredicted_VSCi');
-    dest_folder_tec_PAMoriginal = fullfile(direct_tecs, foldernames_tecs{i}, 'PAMoriginal_matrixcomplex');
-    dest_folder_tec_Step = fullfile(direct_tecs, foldernames_tecs{i}, 'step');
+    dest_folder_tec_CoefsPredVSCd = fullfile(direct_tecs_predict, foldernames_tecs{i}, 'CoefficientsPredicted_VSCd');
+    dest_folder_tec_CoefsPredVSCi = fullfile(direct_tecs_predict, foldernames_tecs{i}, 'CoefficientsPredicted_VSCi');
+    dest_folder_tec_PAMoriginal = fullfile(direct_tecs_predict, foldernames_tecs{i}, 'PAMoriginal_matrixcomplex');
+    dest_folder_tec_Step = fullfile(direct_tecs_predict, foldernames_tecs{i}, 'step');
     
    
-    
     % CREACION DE CARPETAS DESTINO SI NO EXISTEN:
+
     % PARA SANOS:
     if ~exist(dest_folder_sano_CoefsPredVSCd, 'dir')
         mkdir(dest_folder_sano_CoefsPredVSCd);
@@ -1332,16 +1328,6 @@ for i = 1:num_people
         mkdir(dest_folder_tec_Step);
     end
    
-    %SANO
-    if ~exist(dest_folder_sano_pam_tensor3d, 'dir')
-        mkdir(dest_folder_sano_pam_tensor3d);
-    end
-    %TEC
-    if ~exist(dest_folder_tec_pam_tensor3d, 'dir')
-        mkdir(dest_folder_tec_pam_tensor3d);
-    end
-   
-    
 
     % COPIADO DE CARPETAS EN LOS DIRECTORIOS DESTINO:
     % PARA SANOS:
@@ -1388,10 +1374,27 @@ for i = 1:num_people
         warning('La carpeta de origen %s no existe.', source_folder_tec_Step);
     end
 
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
+    %              DIRECTORIOS PARA ENTRENAMIENTO DE LA RED
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+    %PAM
+    % Directorios de origen
+    source_folder_sano_pam_tensor3d = fullfile(direct_sanos_to_copy, foldernames_sanos{i}, 'PAMnoises_matrixcomplex_npy_tensor3d');
+    source_folder_tec_pam_tensor3d = fullfile(direct_tecs_to_copy, foldernames_tecs{i}, 'PAMnoises_matrixcomplex_npy_tensor3d');
+    % Directorios de destino
+    dest_folder_sano_pam_tensor3d = fullfile(direct_sanos_train, foldernames_sanos{i}, 'PAMnoises_matrixcomplex_npy_tensor3d');
+    dest_folder_tec_pam_tensor3d = fullfile(direct_tecs_train, foldernames_tecs{i}, 'PAMnoises_matrixcomplex_npy_tensor3d');
+    % Se crean directorios si no existen:
+    %SANO
+    if ~exist(dest_folder_sano_pam_tensor3d, 'dir')
+        mkdir(dest_folder_sano_pam_tensor3d);
+    end
+    %TEC
+    if ~exist(dest_folder_tec_pam_tensor3d, 'dir')
+        mkdir(dest_folder_tec_pam_tensor3d);
+    end
     % Copiar la carpeta "PAMnoises_matrixcomplex_npy_tensor3d" para SANOS
     if exist(source_folder_sano_pam_tensor3d, 'dir')
         copyfile(source_folder_sano_pam_tensor3d, dest_folder_sano_pam_tensor3d);
@@ -1470,6 +1473,12 @@ for i = 1:num_people
     end
     
 end
+%***FIN***
+
+
+
+
+
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1483,11 +1492,11 @@ for i = 1:num_people
     %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
     %PAM
     % Directorios de destino
-    dest_folder_sano_coefs_pred_vscd = fullfile(direct_sanos, foldernames_sanos{i}, 'CoefficientsPredicted_VSCd');
-    dest_folder_sano_coefs_pred_vsci = fullfile(direct_sanos, foldernames_sanos{i}, 'CoefficientsPredicted_VSCi');
+    dest_folder_sano_coefs_pred_vscd = fullfile(direct_sanos_predict, foldernames_sanos{i}, 'CoefficientsPredicted_VSCd');
+    dest_folder_sano_coefs_pred_vsci = fullfile(direct_sanos_predict, foldernames_sanos{i}, 'CoefficientsPredicted_VSCi');
 
-    dest_folder_tec_coefs_pred_vscd = fullfile(direct_tecs, foldernames_tecs{i}, 'CoefficientsPredicted_VSCd');
-    dest_folder_tec_coefs_pred_vsci = fullfile(direct_tecs, foldernames_tecs{i}, 'CoefficientsPredicted_VSCi');
+    dest_folder_tec_coefs_pred_vscd = fullfile(direct_tecs_predict, foldernames_tecs{i}, 'CoefficientsPredicted_VSCd');
+    dest_folder_tec_coefs_pred_vsci = fullfile(direct_tecs_predict, foldernames_tecs{i}, 'CoefficientsPredicted_VSCi');
     % Se crean directorios si no existen:
     %SANO
     if ~exist(dest_folder_sano_coefs_pred_vscd, 'dir')
