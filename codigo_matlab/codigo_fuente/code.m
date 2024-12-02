@@ -22,7 +22,80 @@
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%{
+%graficas de cwt y icwt con media de senal original: ejemplo:
+fs = 5;
+original = struct_lds_sano_norm(11).signal_vscd;
+original_norm = (original - min(original))/(max(original) - min(original));
+coefs = cwt(original_norm);
+xrec2 = icwt(coefs, SignalMean=mean(original_norm));
+xrec = xrec2(:);
+%normalizar
+xrec_norm = (xrec - min(xrec))/(max(xrec) - min(xrec));
+r = corr(original_norm(:), xrec_norm(:), 'type', 'Pearson');
+disp(r);
+dt = 1/fs;
+t = 0:dt:numel(original_norm)*dt-dt;
 
+plot(t,original_norm)
+xlabel("tiempo(s)")
+ylabel("amplitud")
+hold on
+plot(t,xrec_norm,"r")
+hold off
+axis tight
+legend("vSCd original","vSCd estimada")
+title(sprintf('SANO|1\\_HEMU: Coeficiente de correlación de Pearson (r = %.4f)', r));
+xticks(0:50:250);
+xlim([0 250]);
+%}
+
+%{
+%ejemplo escalograma
+fs=5;
+original = struct_lds_sano_norm(11).signal_vscd;
+original_norm2 = (original - min(original))/(max(original) - min(original));
+[coefs_original_vscd, freqs_original_vscd, scalcfs_original_vscd, psif_original_vscd] = cwt(original_norm2);
+get_signal_vsc_predicted = icwt(coefs_original_vscd, [], ScalingCoefficients = scalcfs_original_vscd, AnalysisFilterBank = psif_original_vscd); 
+xrec_norm = (get_signal_vsc_predicted - min(get_signal_vsc_predicted))/(max(get_signal_vsc_predicted) - min(get_signal_vsc_predicted));
+
+r = corr(original_norm2(:), xrec_norm(:), 'type', 'Pearson');
+disp(r);
+dt = 1/fs;
+t = 0:dt:numel(original_norm2)*dt-dt;
+
+
+ % Visualizar los coeficientes
+figure;
+pcolor(t, freqs_original_vscd, abs(coefs_original_vscd));
+shading flat;
+set(gca, 'YScale', 'log');  % Escala logarítmica en el eje Y (frecuencia)
+xlabel('Tiempo (seg)');
+ylabel('Escala (logarítmica)');
+title('SANO|1\_HEMU: Escalograma de coeficientes');
+colorbar;
+hold on;
+imagesc(1:length(original_norm2),freqs_original_vscd, abs(coefs_original_vscd)); % Usamos el logaritmo para mejorar la visualización de las escalas
+axis xy; % Para que las escalas más altas estén arriba
+xlabel('Tiempo (seg)');
+ylabel('Escala (logarítmica)');
+title('SANO|1\_HEMU: Escalograma de coeficientes');
+colorbar; % Para mostrar la barra de color que indica la magnitud de los coeficientes
+%}
+
+%{
+plot(t,original_norm2)
+xlabel("tiempo(s)")
+ylabel("amplitud")
+hold on
+plot(t,xrec_norm,"r")
+hold off
+axis tight
+legend("vSCd original","vSCd estimada")
+title(sprintf('SANO|1\\_HEMU: Coeficiente de correlación de Pearson (r = %.4f)', r));
+xticks(0:50:250);
+xlim([0 250]);
+%}
 
 
 % codigo final 
@@ -41,7 +114,7 @@ num_people = 27;
 
 % Directorios y configuracion
 sourceDirectory_sano = 'D:\TT\Memoria\CodigoFuenteNormalized\codigo_matlab\codigo_fuente\LDS\DATOS_SANOS_PAR';
-destinationDirectory_sano = 'D:\TT\Memoria\CodigoFuenteNormalized\codigo_matlab\codigo_fuente\signals_LDS_NormNoiseMax5\SANOS';
+destinationDirectory_sano = 'D:\TT\Memoria\CodigoFuenteNormalized\codigo_matlab\codigo_fuente\signals_LDS_NormNoiseMax2dot5OnlyInput\SANOS';
 
 % Obtener la lista de archivos .PAR en el directorio
 fileList_sano = dir(fullfile(sourceDirectory_sano, '*.PAR'));
@@ -118,7 +191,7 @@ end
 
 % Directorios y configuracion
 sourceDirectory_tec = 'D:\TT\Memoria\CodigoFuenteNormalized\codigo_matlab\codigo_fuente\LDS\DATOS_TEC_PAR';
-destinationDirectory_tec = 'D:\TT\Memoria\CodigoFuenteNormalized\codigo_matlab\codigo_fuente\signals_LDS_NormNoiseMax5\TEC';
+destinationDirectory_tec = 'D:\TT\Memoria\CodigoFuenteNormalized\codigo_matlab\codigo_fuente\signals_LDS_NormNoiseMax2dot5OnlyInput\TEC';
 
 % Obtener la lista de archivos .PAR en el directorio
 fileList_tec = dir(fullfile(sourceDirectory_tec, '*.PAR'));
@@ -189,7 +262,7 @@ ts = 0.2; % segundos
 fs = 1.0 / ts; % Hz
 % Aplicacion de ruido gaussinano y filtro octavo orden a las senales PAM,
 % VSCd y VSCi tanto de sujetos sanos como de pacientes TEC:
-[struct_lds_sano_norm, struct_lds_tec_norm] = apply_noise_and_filter_lds(struct_lds_sano_norm, struct_lds_tec_norm, fs, num_of_noises_signals);
+[struct_lds_sano_norm, struct_lds_tec_norm] = apply_noise_and_filter_lds_only_input(struct_lds_sano_norm, struct_lds_tec_norm, fs, num_of_noises_signals);
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -201,7 +274,7 @@ fs = 1.0 / ts; % Hz
 %===============================================================================================================================
 % Se obtienen los nombres de todas las carpetas existentes en el direccion
 % path_sano: 27 sujetos en total
-path_sano = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5/SANOS';
+path_sano = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax2dot5OnlyInput/SANOS';
 % Obtener los nombres de las carpetas dentro del directorio
 folder_structs_sano = dir(path_sano);
 folder_names_sano = {folder_structs_sano([folder_structs_sano.isdir]).name}; % se obtiene los nombres de las carpetas
@@ -211,7 +284,7 @@ folder_names_sano = setdiff(folder_names_sano, {'.', '..'}); % vector fila que a
 % Se obtienen los nombres de todas las carpetas existentes en el direccion
 % path_files_signals. Carpetas a seleccionar --> PAMnoises, VSCdnoises,
 % VSCinoises
-path_files_signals_sano = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5/SANOS/1_HEMU'; % Se elige 1_HEMU al azar, todos los sujetos tienen las mismas carpetas asociadas a las senales con ruido
+path_files_signals_sano = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax2dot5OnlyInput/SANOS/1_HEMU'; % Se elige 1_HEMU al azar, todos los sujetos tienen las mismas carpetas asociadas a las senales con ruido
 % Obtener los nombres de las carpetas dentro del directorio
 folder_signals_sano = dir(path_files_signals_sano);
 folder_names_signals_sano = {folder_signals_sano([folder_signals_sano.isdir]).name}; % se obtiene los nombres de las carpetas
@@ -225,7 +298,7 @@ folder_names_signals_sano = setdiff(folder_names_signals_sano, {'.', '..'}); % v
 %===============================================================================================================================
 % Se obtienen los nombres de todas las carpetas existentes en el direccion
 % path_sano: 27 sujetos en total
-path_tec = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5/TEC';
+path_tec = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax2dot5OnlyInput/TEC';
 % Obtener los nombres de las carpetas dentro del directorio
 folder_structs_tec = dir(path_tec);
 folder_names_tec = {folder_structs_tec([folder_structs_tec.isdir]).name}; % se obtiene los nombres de las carpetas
@@ -235,7 +308,7 @@ folder_names_tec = setdiff(folder_names_tec, {'.', '..'}); % vector fila que alm
 % Se obtienen los nombres de todas las carpetas existentes en el direccion
 % path_files_signals. Carpetas a seleccionar --> PAMnoises, VSCdnoises,
 % VSCinoises
-path_files_signals_tec = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5/TEC/1_DENI1005'; % Se elige 1_DENI1005 al azar, todos los sujetos tienen las mismas carpetas asociadas a las senales con ruido
+path_files_signals_tec = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax2dot5OnlyInput/TEC/1_DENI1005'; % Se elige 1_DENI1005 al azar, todos los sujetos tienen las mismas carpetas asociadas a las senales con ruido
 % Obtener los nombres de las carpetas dentro del directorio
 folder_signals_tec = dir(path_files_signals_tec);
 folder_names_signals_tec = {folder_signals_tec([folder_signals_tec.isdir]).name}; % se obtiene los nombres de las carpetas
@@ -565,13 +638,14 @@ for index = 1:num_people
     struct_lds_tec_norm(index).struct_original_VSCi(1).freqs_original_vsci = freqs_original_vsci;
 end
 
-
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 % Especifica el directorio donde deseas guardar la estructura
 directory_structs = 'D:\TT\Memoria\CodigoFuenteNormalized\codigo_matlab\codigo_fuente\Estructuras_SANOS_TEC';
 
 %============== Sanos ==================================================
 % Especifica el nombre del archivo
-filename_struct_sano = 'struct_lds_sano_norm_noisemax5.mat';
+filename_struct_sano = 'struct_lds_sano_norm_noisemax2dot5onlyinput.mat';
 % Crea la ruta completa del archivo
 filepath_struct_sano = fullfile(directory_structs, filename_struct_sano);
 % Guarda la estructura en el archivo .mat
@@ -581,7 +655,7 @@ fprintf("(*) La estructura para sujetos sanos normalizados se ha guardado correc
 
 %============== TEC ==================================================
 % Especifica el nombre del archivo
-filename_struct_tec = 'struct_lds_tec_norm_noisemax5.mat';
+filename_struct_tec = 'struct_lds_tec_norm_noisemax2dot5onlyinput.mat';
 % Crea la ruta completa del archivo
 filepath_struct_tec = fullfile(directory_structs, filename_struct_tec);
 % Guarda la estructura en el archivo .mat
@@ -601,8 +675,8 @@ fprintf("(*) La estructura para pacientes TEC normalizados se ha guardado correc
 % luego trabajar con la red profunda en python. Para ello se importan 
 % las matrices en formato.mat y luego en python se utiliza un script
 % para transformar dicho formato a npy.
-direct_sanos = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/Signals_LDS_NormNoiseMax5/SANOS';
-direct_tecs = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/Signals_LDS_NormNoiseMax5/TEC';
+direct_sanos = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/Signals_LDS_NormNoiseMax2dot5OnlyInput/SANOS';
+direct_tecs = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/Signals_LDS_NormNoiseMax2dot5OnlyInput/TEC';
 
 % Obtener los nombres de las carpetas dentro del directorio de SANOS
 folders_sanos = dir(direct_sanos);
@@ -1044,35 +1118,6 @@ end
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-%{
-%%%______ evaluando solo al sujeto 11_JULE (grafica de respuesta de VSCd)
-persona = struct_lds_sano(2); %Se elige 11_JULE ya que su respuesta de vSC derecha no es buena
-pam_persona = persona.signal_pam; %se selecciona la senal PAM de la persona
-disp(persona);
-[escalon_inverso_unitario, largo_escalon_ini] = get_step_no_normalized_testing(Ts, butterworth_order, cut_freq, pam_persona);
-disp(length(largo_escalon_ini));
-disp(length(escalon_inverso_unitario));
-
-
-struct_minmaxpam(1) = struct('coefs_step', [], 'freqs_step', [], 'scalscfs_step', [], 'psif_step', []);
-% Aplicacion de CWT para obtener coeficientes
-[coefs_step, freqs_step, scalscfs_step, psif_step] = cwt(escalon_inverso_unitario);
-struct_minmaxpam(1).coefs_step = coefs_step;
-struct_minmaxpam(1).freqs_step = freqs_step;
-struct_minmaxpam(1).scalscfs_step = scalscfs_step;
-struct_minmaxpam(1).psif_step = psif_step;
-
-% Directorio donde se guardara el archivo.mat de los coefs del escalon inverso unitario
-dir_eiu = 'D:/TT/Memoria/MemoriaCodigoFuentev3/codigo_matlab/codigo_fuente/Estructuras_SANOS_TEC/';
-% Guardar la matriz coefs_eui en un archivo .mat
-save(fullfile(dir_eiu, 'coefs_step.mat'), 'coefs_step');
-save(fullfile(dir_eiu, 'struct_minmaxpam.mat'), 'struct_minmaxpam');
-%%%______
-%}
-
-
-
-
 % Se procede a guardar los coefs en formato.mat para probarlo en la red
 % Este input de coefs de escalon unitario inverso es de uso particular, es
 % decir, cada sujeto SANO y paciente TEC tiene un escalón inverso que esta
@@ -1091,8 +1136,8 @@ cut_freq = 0.3;
 % CREACION DE ESTRUCTURA QUE GUARDARA INFORMACION DE LOS ESCALONES DE CADA
 % INDIVIDUO. struct_steps_sanos{struct_step, struct_step, ...} y
 % struct_steps_tecs{struct_step, struct_step, ...}
-struct_step_sanos_norm_noisemax5(num_people) = struct('nombre', '','coefs_step', [], 'scalscfs_step', [], 'psif_step', [], 'freqs_step', [], 'signal_step', []);%SANOS
-struct_step_tecs_norm_noisemax5(num_people) = struct('nombre', '','coefs_step', [], 'scalscfs_step', [], 'psif_step', [], 'freqs_step', [], 'signal_step', []);%TECS
+struct_step_sanos_norm_noisemax2dot5onlyinput(num_people) = struct('nombre', '','coefs_step', [], 'scalscfs_step', [], 'psif_step', [], 'freqs_step', [], 'signal_step', []);%SANOS
+struct_step_tecs_norm_noisemax2dot5onlyinput(num_people) = struct('nombre', '','coefs_step', [], 'scalscfs_step', [], 'psif_step', [], 'freqs_step', [], 'signal_step', []);%TECS
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1102,11 +1147,12 @@ struct_step_tecs_norm_noisemax5(num_people) = struct('nombre', '','coefs_step', 
 step_norm = get_step_normalized(Ts, butterworth_order, cut_freq);
 
 %{
+step_norm_show = step_norm(762:end);
 % Crear el vector de tiempo
-t = (0:length(step_norm)-1) * 0.2;
+t = (0:length(step_norm_show)-1) * 0.2;
 % Graficar el escalon unitario inverso para ver el comportamiento teorico
 figure;
-plot(t, step_norm, 'LineWidth', 2);
+plot(t, step_norm_show, 'LineWidth', 2);
 hold on;
 xlabel('Tiempo (s)');
 ylabel('cm/s');
@@ -1115,7 +1161,7 @@ legend('Suavizado');
 %xlim([190 end]);
 grid on;
 % Ajustar los marcadores del eje x para que vayan de 1 en 1 segundos
-xticks(0:5:max(t));
+%xticks(0:5:max(t));
 %}
 
 
@@ -1132,16 +1178,16 @@ for i = 1:num_people
     %CALCULO DE LA CWT() PARA OBTENER LOS COEFICIENTES (INPUT DE LA RED)
     [coefs_step, freqs_step, scalscfs_step, psif_step] = cwt(escalon_inverso_unitario_persona_sana);
     %ASIGNAR INFORMACION DE LA PERSONA SANA A SU RESPECTIVA ESTRUCTURA
-    struct_step_sanos_norm_noisemax5(i).nombre = persona_sana.name_file;
-    struct_step_sanos_norm_noisemax5(i).coefs_step = coefs_step;
-    struct_step_sanos_norm_noisemax5(i).freqs_step = freqs_step;
-    struct_step_sanos_norm_noisemax5(i).scalscfs_step = scalscfs_step;
-    struct_step_sanos_norm_noisemax5(i).psif_step = psif_step;
-    struct_step_sanos_norm_noisemax5(i).signal_step = escalon_inverso_unitario_persona_sana;
+    struct_step_sanos_norm_noisemax2dot5onlyinput(i).nombre = persona_sana.name_file;
+    struct_step_sanos_norm_noisemax2dot5onlyinput(i).coefs_step = coefs_step;
+    struct_step_sanos_norm_noisemax2dot5onlyinput(i).freqs_step = freqs_step;
+    struct_step_sanos_norm_noisemax2dot5onlyinput(i).scalscfs_step = scalscfs_step;
+    struct_step_sanos_norm_noisemax2dot5onlyinput(i).psif_step = psif_step;
+    struct_step_sanos_norm_noisemax2dot5onlyinput(i).signal_step = escalon_inverso_unitario_persona_sana;
     
     %SE CREA CARPETA QUE GUARDARA EL ESCALON DE LA PERSONA SANA:
     %dir_step_sano = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm/SANOS/', persona_sana.name_file, '/step');
-    dir_step_sano = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5/SANOS/', persona_sana.name_file, '/step');
+    dir_step_sano = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax2dot5OnlyInput/SANOS/', persona_sana.name_file, '/step');
     %%%% SANO %%%%
     if ~exist(dir_step_sano, 'dir')
         mkdir(dir_step_sano);
@@ -1160,16 +1206,16 @@ for i = 1:num_people
     %CALCULO DE LA CWT() PARA OBTENER LOS COEFICIENTES (INPUT DE LA RED)
     [coefs_step, freqs_step, scalscfs_step, psif_step] = cwt(escalon_inverso_unitario_persona_tec);
     %ASIGNAR INFORMACION DE LA PERSONA TEC A SU RESPECTIVA ESTRUCTURA
-    struct_step_tecs_norm_noisemax5(i).nombre = persona_tec.name_file;
-    struct_step_tecs_norm_noisemax5(i).coefs_step = coefs_step;
-    struct_step_tecs_norm_noisemax5(i).freqs_step = freqs_step;
-    struct_step_tecs_norm_noisemax5(i).scalscfs_step = scalscfs_step;
-    struct_step_tecs_norm_noisemax5(i).psif_step = psif_step;
-    struct_step_tecs_norm_noisemax5(i).signal_step = escalon_inverso_unitario_persona_tec;
+    struct_step_tecs_norm_noisemax2dot5onlyinput(i).nombre = persona_tec.name_file;
+    struct_step_tecs_norm_noisemax2dot5onlyinput(i).coefs_step = coefs_step;
+    struct_step_tecs_norm_noisemax2dot5onlyinput(i).freqs_step = freqs_step;
+    struct_step_tecs_norm_noisemax2dot5onlyinput(i).scalscfs_step = scalscfs_step;
+    struct_step_tecs_norm_noisemax2dot5onlyinput(i).psif_step = psif_step;
+    struct_step_tecs_norm_noisemax2dot5onlyinput(i).signal_step = escalon_inverso_unitario_persona_tec;
     
     %SE CREA CARPETA QUE GUARDARA EL ESCALON DE LA PERSONA TEC:
     %dir_step_tec = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_Norm/TEC/', persona_tec.name_file, '/step');
-    dir_step_tec = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5/TEC/', persona_tec.name_file, '/step');
+    dir_step_tec = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax2dot5OnlyInput/TEC/', persona_tec.name_file, '/step');
     %%%% TEC %%%%
     if ~exist(dir_step_tec, 'dir')
         mkdir(dir_step_tec);
@@ -1177,40 +1223,6 @@ for i = 1:num_people
     %SE GUARDAN LOS COEFICIENTES EN FORMATO .mat
     save(fullfile(dir_step_tec, 'coefs_step.mat'), 'coefs_step');   
 end
-%{
-Ts=0.2;
-cut_freq=0.3;
-order = 2;
-escalonInverso=ones(150/Ts,1);
-escalonInverso(1:length(escalonInverso)/2)=escalonInverso(1:length(escalonInverso)/2);%*max(PAM);
-escalonInverso(1+length(escalonInverso)/2:length(escalonInverso))=escalonInverso(1+length(escalonInverso)/2:length(escalonInverso))*0;%*min(PAM);
-[b,a] = butter(order,cut_freq);
-escalonInverso = filter(b,a,escalonInverso);
-escalonInverso=[escalonInverso,zeros(length(escalonInverso),1)];
-escalonInverso_cut = escalonInverso(326:end);
-escalonInverso_cut_column = escalonInverso_cut(:); 
-less = abs(1024 - length(escalonInverso_cut_column));
-escalonInversoFinal = escalonInverso_cut_column(1:(end-less));
-disp('largoo:');
-disp(length(escalonInversoFinal));
-[min, max, nn] = norm_min_max_original_signal(escalonInversoFinal);
-
- % Crear el vector de tiempo
-t = (0:length(nn)-1) * Ts;
-% Graficar el escalon unitario inverso para ver el comportamiento teorico
-figure;
-plot(t, nn, 'LineWidth', 2);
-hold on;
-xlabel('Tiempo (s)');
-ylabel('cm/s');
-title('Escalón Unitario Inverso (PRE): Suavizado con Filtro Butterworth 2do orden - Freq de corte de 0.3 [Hz] y periodo de muestreo de 0.2 [seg]');
-legend('Suavizado');
-xlim([0 45]);
-grid on;
-% Ajustar los marcadores del eje x para que vayan de 1 en 1 segundos
-xticks(0:5:max(t));
-%}
-
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
@@ -1221,32 +1233,32 @@ xticks(0:5:max(t));
 % SE GUARDA ESTRUCTURA ASOCIADA A LOS SANOS EN FORMATO .mat
 dir_structs_sano = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/Estructuras_SANOS_TEC/');
 % Guardar la una estructuras generales del escalon inverso unitario de cada sujeto SANO en un archivo .mat
-save(fullfile(dir_structs_sano, 'struct_step_sanos_norm_noisemax5.mat'), 'struct_step_sanos_norm_noisemax5');
+save(fullfile(dir_structs_sano, 'struct_step_sanos_norm_noisemax2dot5onlyinput.mat'), 'struct_step_sanos_norm_noisemax2dot5onlyinput');
 
 % SE GUARDA ESTRUCTURA ASOCIADA A LOS TECs EN FORMATO .mat
 dir_structs_tec = strcat('D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/Estructuras_SANOS_TEC/');
 % Guardar la una estructuras generales del escalon inverso unitario de cada paciente TEC en un archivo .mat
-save(fullfile(dir_structs_tec, 'struct_step_tecs_norm_noisemax5.mat'), 'struct_step_tecs_norm_noisemax5');
+save(fullfile(dir_structs_tec, 'struct_step_tecs_norm_noisemax2dot5onlyinput.mat'), 'struct_step_tecs_norm_noisemax2dot5onlyinput');
 
 
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%% COPIADO DE CARPETAS A NUEVOS DIRECTORIOS DESDE DIRECOTRIO BASE A DIRECTORIO CON LOS INPUTS PARA LA RED PARA %%%%% 
-%%%%%%%%%%%%%% PREDECIR LA SEÑAL VSC                                                                                         %%%
+%%%%%%%%%%%%%% PREDECIR LA SEÑAL VSC                                                                                       %%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 % Directorios para predecir el output por medio de la red unet
 % Directorios origen
-direct_sanos_to_copy = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5/SANOS';
-direct_tecs_to_copy = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5/TEC';
+direct_sanos_to_copy = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax2dot5OnlyInput/SANOS';
+direct_tecs_to_copy = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax2dot5OnlyInput/TEC';
 % Directorios destino
-direct_sanos_predict = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5Predictions/SANOS';
-direct_tecs_predict = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5Predictions/TEC';
+direct_sanos_predict = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax2dot5OnlyInputPredictions/SANOS';
+direct_tecs_predict = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax2dot5OnlyInputPredictions/TEC';
 % Directorios para guardar los I/O para entrenar la red:
-direct_sanos_train = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5Training/SANOS';
-direct_tecs_train = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax5Training/TEC';
+direct_sanos_train = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax2dot5OnlyInputTraining/SANOS';
+direct_tecs_train = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax2dot5OnlyInputTraining/TEC';
 
 
 % Obtener los nombres de las carpetas dentro del directorio de SANOS
@@ -1473,8 +1485,12 @@ for i = 1:num_people
     end
     
 end
-%***FIN***
 
+
+
+%************************************************************************
+%**********************    FIN - CODIGO FUENTE   ************************
+%************************************************************************
 
 
 

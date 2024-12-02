@@ -33,6 +33,6 @@ function [new_step] = get_step_normalized(Ts, order, cut_freq)
     step = en(1:fin); % con esto se tienen 40 segundos luego de la caida de presion
     trozo = 1024-fin;
     add = ones(trozo, 1);
-    new_step = [add; step]; % nuevo escalon con un y=1 de 858 instancias (antes eran 50 instancias)
+    new_step = [add; step]; % nuevo escalon con un y=1 de 808(858?) instancias (antes eran 50 instancias)
 
 end

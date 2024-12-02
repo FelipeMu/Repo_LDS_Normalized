@@ -1,8 +1,8 @@
-function [struct_lds_sano_norm, struct_lds_tec_norm] = apply_noise_and_filter_lds(struct_lds_sano_norm, struct_lds_tec_norm, sampling_freq, len_signals_noises)
+function [struct_lds_sano_norm, struct_lds_tec_norm] = apply_noise_and_filter_lds_only_input(struct_lds_sano_norm, struct_lds_tec_norm, sampling_freq, len_signals_noises)
     
     % Carpeta donde se guardaran los nuevos archivos CSV con ruido (generar  D:\TT\Memoria\waveletycnn\codigo_matlab\codigo_fuente\signals_LDS\SANOS
-    output_folder_sanos = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax2dot5/SANOS';
-    output_folder_tec = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax2dot5/TEC';
+    output_folder_sanos = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax2dot5OnlyInput/SANOS';
+    output_folder_tec = 'D:/TT/Memoria/CodigoFuenteNormalized/codigo_matlab/codigo_fuente/signals_LDS_NormNoiseMax2dot5OnlyInput/TEC';
 
     % Parametros de ruido gaussiano
     cv_inf = 0;
@@ -24,12 +24,12 @@ function [struct_lds_sano_norm, struct_lds_tec_norm] = apply_noise_and_filter_ld
     for idx = 1:num_signals_sanos
         % Se recoge la senal PAM y VSCd y VSCi del sujeto SANO idx (idx: 1...27)
         original_signal_pam_sano = struct_lds_sano_norm(idx).signal_pam; % Senal original PAM sano
-        original_signal_vscd_sano = struct_lds_sano_norm(idx).signal_vscd; % Senal original VSCd sano
-        original_signal_vsci_sano = struct_lds_sano_norm(idx).signal_vsci; % Senal original VSCd sano
+        original_signal_vscd_sano = struct_lds_sano_norm(idx).signal_vscd; % Senal original VSCd sano - NO APLICAR RUIDO
+        original_signal_vsci_sano = struct_lds_sano_norm(idx).signal_vsci; % Senal original VSCd sano - NO APLICAR RUIDO
         % Se recoge la senal PAM y VSCd y VSCi del sujeto TEC idx (idx: 1...27)
         original_signal_pam_tec = struct_lds_tec_norm(idx).signal_pam; % Senal original PAM tec
-        original_signal_vscd_tec = struct_lds_tec_norm(idx).signal_vscd; % Senal original VSCd tec
-        original_signal_vsci_tec = struct_lds_tec_norm(idx).signal_vsci; % Senal original VSCd tec
+        original_signal_vscd_tec = struct_lds_tec_norm(idx).signal_vscd; % Senal original VSCd tec - NO APLICAR RUIDO
+        original_signal_vsci_tec = struct_lds_tec_norm(idx).signal_vsci; % Senal original VSCd tec - NO APLICAR RUIDO
     
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
         %%%% NORMALIZACION MIN-MAX %%%%%%% SUJETO SANO %%%%%
@@ -80,7 +80,7 @@ function [struct_lds_sano_norm, struct_lds_tec_norm] = apply_noise_and_filter_ld
         %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 
 
-        % Crear 50 senales con ruido hemodinamico y aplicar el filtro para
+        % Crear 15 senales con ruido hemodinamico y aplicar el filtro para
         % PAM - VSCd - VSCi
         for i = 1:len_signals_noises
             % Generar coeficiente de variacion aleatorio entre 5% y 10%
@@ -89,58 +89,69 @@ function [struct_lds_sano_norm, struct_lds_tec_norm] = apply_noise_and_filter_ld
             % Calcular desviacion estandar del ruido basado en la media de
             % la senal original - sujeto sano
             noise_std_pam_sano = mean(original_signal_pam_sano) * cv; %PAM sano 
-            noise_std_vscd_sano = mean(original_signal_vscd_sano) * cv; %VSCd sano
-            noise_std_vsci_sano = mean(original_signal_vsci_sano) * cv; %VSCi sano
+            %noise_std_vscd_sano = mean(original_signal_vscd_sano) * cv; %VSCd sano - NO APLICAR RUIDO
+            %noise_std_vsci_sano = mean(original_signal_vsci_sano) * cv; %VSCi sano - NO APLICAR RUIDO
+            
             % Calcular desviacion estandar del ruido basado en la media de
             % la senal original - sujeto tec
             noise_std_pam_tec = mean(original_signal_pam_tec) * cv; %PAM tec
-            noise_std_vscd_tec = mean(original_signal_vscd_tec) * cv; %VSCd tec
-            noise_std_vsci_tec = mean(original_signal_vsci_tec) * cv; %VSCi tec
+            %noise_std_vscd_tec = mean(original_signal_vscd_tec) * cv; %VSCd tec - NO APLICAR RUIDO
+            %noise_std_vsci_tec = mean(original_signal_vsci_tec) * cv; %VSCi tec - NO APLICAR RUIDO
 
 
             
             % Generar ruido blanco gaussiano (GWN) - sujeto sano
             noise_pam_sano = noise_std_pam_sano * randn(size(original_signal_pam_sano));%SANO
-            noise_vscd_sano = noise_std_vscd_sano * randn(size(original_signal_vscd_sano));%SANO
-            noise_vsci_sano = noise_std_vsci_sano * randn(size(original_signal_vsci_sano));%SANO
+            %noise_vscd_sano = noise_std_vscd_sano * randn(size(original_signal_vscd_sano));%SANO  - NO APLICAR RUIDO
+            %noise_vsci_sano = noise_std_vsci_sano * randn(size(original_signal_vsci_sano));%SANO - NO APLICAR RUIDO
+            
             % Generar ruido blanco gaussiano (GWN) - sujeto tec
             noise_pam_tec = noise_std_pam_tec * randn(size(original_signal_pam_tec));%TEC
-            noise_vscd_tec = noise_std_vscd_tec * randn(size(original_signal_vscd_tec));%TEC
-            noise_vsci_tec = noise_std_vsci_tec * randn(size(original_signal_vsci_tec));%TEC
+            %noise_vscd_tec = noise_std_vscd_tec * randn(size(original_signal_vscd_tec));%TEC - NO APLICAR RUIDO
+            %noise_vsci_tec = noise_std_vsci_tec * randn(size(original_signal_vsci_tec));%TEC - NO APLICAR RUIDO
 
             % Agregar el ruido a la senal original - sujeto sano
             noisy_signal_pam_sano = original_signal_pam_sano + noise_pam_sano;%SANO
-            noisy_signal_vscd_sano = original_signal_vscd_sano + noise_vscd_sano;%SANO
-            noisy_signal_vsci_sano = original_signal_vsci_sano + noise_vsci_sano;%SANO
+            %noisy_signal_vscd_sano = original_signal_vscd_sano + noise_vscd_sano;%SANO - NO APLICAR RUIDO
+            %noisy_signal_vsci_sano = original_signal_vsci_sano + noise_vsci_sano;%SANO - NO APLICAR RUIDO
+            
             % Agregar el ruido a la senal original - sujeto tec
             noisy_signal_pam_tec = original_signal_pam_tec + noise_pam_tec;%TEC
-            noisy_signal_vscd_tec = original_signal_vscd_tec + noise_vscd_tec;%TEC
-            noisy_signal_vsci_tec = original_signal_vsci_tec + noise_vsci_tec;%TEC
+            %noisy_signal_vscd_tec = original_signal_vscd_tec + noise_vscd_tec;%TEC - NO APLICAR RUIDO
+            %noisy_signal_vsci_tec = original_signal_vsci_tec + noise_vsci_tec;%TEC - NO APLICAR RUIDO
 
             % Aplicar el filtro Butterworth pasabajos - sujeto sano
             filtered_signal_pam_sano = filtfilt(b, a, noisy_signal_pam_sano);%SANO
-            filtered_signal_vscd_sano = filtfilt(b, a, noisy_signal_vscd_sano);%SANO
-            filtered_signal_vsci_sano = filtfilt(b, a, noisy_signal_vsci_sano);%SANO
+            %filtered_signal_vscd_sano = filtfilt(b, a, noisy_signal_vscd_sano);%SANO - NO APLICAR RUIDO
+            %filtered_signal_vsci_sano = filtfilt(b, a, noisy_signal_vsci_sano);%SANO - NO APLICAR RUIDO
+            % LAS SENALES DE VSCd Y VSCi NO SE LE APLICA RUIDO, ASI QUE
+            % SOLO SE LES APLICA NORMALIZACION MIN-MAX:
+            filtered_signal_vscd_sano = original_signal_vscd_sano;%***SANO - NO APLICAR RUIDO - SOLO SENAL NORMALIZADA***
+            filtered_signal_vsci_sano = original_signal_vsci_sano;%***SANO - NO APLICAR RUIDO - SOLO SENAL NORMALIZADA***
+            
             % Aplicar el filtro Butterworth pasabajos - sujeto tec
             filtered_signal_pam_tec = filtfilt(b, a, noisy_signal_pam_tec);%TEC
-            filtered_signal_vscd_tec = filtfilt(b, a, noisy_signal_vscd_tec);%TEC
-            filtered_signal_vsci_tec = filtfilt(b, a, noisy_signal_vsci_tec);%TEC
+            %filtered_signal_vscd_tec = filtfilt(b, a, noisy_signal_vscd_tec);%TEC - NO APLICAR RUIDO
+            %filtered_signal_vsci_tec = filtfilt(b, a, noisy_signal_vsci_tec);%TEC - NO APLICAR RUIDO
+            % LAS SENALES DE VSCd Y VSCi NO SE LES APLICA RUIDO, ASI QUE
+            % SOLO SE LES APLICA NORMALIZACION MIN-MAX:
+            filtered_signal_vscd_tec = original_signal_vscd_tec;%***TEC - NO APLICAR RUIDO - SOLO SENAL NORMALIZADA***
+            filtered_signal_vsci_tec = original_signal_vsci_tec;%***TEC - NO APLICAR RUIDO - SOLO SENAL NORMALIZADA***
 
- 
             % NORMALIZACION min-max para senales con ruido PAM, VSCd y VSCd
             % - sujeto sano // se guardan los min y max de las senales con
             % ruido en la respectiva estructura de sujeto sano
             [signal_pam_noise_norm_sano_1, struct_lds_sano_norm] = norm_min_max(struct_lds_sano_norm, idx,  i, filtered_signal_pam_sano, 'pam');% Norm PAM - SANO  
             [signal_pam_noise_norm_sano_2, struct_lds_sano_norm] = norm_min_max(struct_lds_sano_norm, idx, i, filtered_signal_pam_sano, 'pam');% Norm PAM - SANO  
-            [signal_vscd_noise_norm_sano, struct_lds_sano_norm] = norm_min_max(struct_lds_sano_norm, idx, i, filtered_signal_vscd_sano, 'vscd');% Norm VSCd - SANO    
-            [signal_vsci_noise_norm_sano, struct_lds_sano_norm] = norm_min_max(struct_lds_sano_norm, idx, i, filtered_signal_vsci_sano, 'vsci');% Norm VSCi - SANO
+            [signal_vscd_noise_norm_sano, struct_lds_sano_norm] = norm_min_max(struct_lds_sano_norm, idx, i, filtered_signal_vscd_sano, 'vscd');% Norm VSCd - SANO - SOLO SENAL NORMALIZADA    
+            [signal_vsci_noise_norm_sano, struct_lds_sano_norm] = norm_min_max(struct_lds_sano_norm, idx, i, filtered_signal_vsci_sano, 'vsci');% Norm VSCi - SANO - SOLO SENAL NORMALIZADA
             % NORMALIZACION min-max para senales con ruido PAM, VSCd y VSCd
             % - sujeto tec  // // se guardan los min y max de las senales con
             % ruido en la respectiva estructura de sujeto tec
             [signal_pam_noise_norm_tec_1, struct_lds_tec_norm] = norm_min_max(struct_lds_tec_norm, idx,  i, filtered_signal_pam_tec, 'pam');% Norm PAM - TEC  
             [signal_pam_noise_norm_tec_2, struct_lds_tec_norm] = norm_min_max(struct_lds_tec_norm, idx,  i, filtered_signal_pam_tec, 'pam');% Norm PAM - TEC  
-            [signal_vscd_noise_norm_tec, struct_lds_tec_norm] = norm_min_max(struct_lds_tec_norm, idx,  i, filtered_signal_vscd_tec, 'vscd');% Norm VSCd - TEC    
-            [signal_vsci_noise_norm_tec, struct_lds_tec_norm] = norm_min_max(struct_lds_tec_norm, idx,  i, filtered_signal_vsci_tec, 'vsci');% Norm VSCi - TEC
+            [signal_vscd_noise_norm_tec, struct_lds_tec_norm] = norm_min_max(struct_lds_tec_norm, idx,  i, filtered_signal_vscd_tec, 'vscd');% Norm VSCd - TEC - SOLO SENAL NORMALIZADA    
+            [signal_vsci_noise_norm_tec, struct_lds_tec_norm] = norm_min_max(struct_lds_tec_norm, idx,  i, filtered_signal_vsci_tec, 'vsci');% Norm VSCi - TEC - SOLO SENAL NORMALIZADA
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
             %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
